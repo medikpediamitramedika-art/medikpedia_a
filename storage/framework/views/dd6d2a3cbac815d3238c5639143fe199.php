@@ -422,13 +422,26 @@ function buildReceiptPdf(orderData) {
   const writeMeta = (label, value) => {
     doc.setFontSize(10);
     doc.text(label + ' :', leftMargin, y);
-    doc.text(String(value || '-'), valueX, y);
-    y += 16;
+    const maxValueWidth = receiptWidth - labelWidth - 10;
+    const valueLines = doc.splitTextToSize(String(value || '-'), maxValueWidth);
+    doc.text(valueLines, valueX, y);
+    y += 16 * valueLines.length;
   };
   writeMeta('ID Pesanan', `#${orderData.id || '-'}`);
   writeMeta('Tanggal', new Date().toLocaleString('id-ID'));
   if (orderData.buyer_name) writeMeta('Pembeli', orderData.buyer_name);
   if (orderData.phone) writeMeta('No. HP', orderData.phone);
+  if (orderData.address) {
+    const addressParts = [orderData.address];
+    if (orderData.kecamatan) addressParts.push(orderData.kecamatan);
+    if (orderData.kota) addressParts.push(orderData.kota);
+    writeMeta('Alamat', addressParts.filter(Boolean).join(', '));
+  }
+  if (orderData.buyer_type === 'apotik') {
+    writeMeta('Jenis', 'Apotik');
+    if (orderData.sia) writeMeta('SIA', orderData.sia);
+    if (orderData.sipa) writeMeta('SIPA', orderData.sipa);
+  }
   drawLine();
   doc.setFont('helvetica', 'bold'); doc.setFontSize(11);
   line('DAFTAR PRODUK', { align: 'center', spacing: 21 });
