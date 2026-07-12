@@ -1,0 +1,1080 @@
+/* =============================================
+   MEDIKPEDIA - Responsive Fixes
+   Perbaikan styling desktop & mobile semua halaman user
+   ============================================= */
+
+/* ===== GLOBAL RESET & BASE ===== */
+*, *::before, *::after { 
+    box-sizing: border-box; 
+}
+
+img, video { 
+    max-width: 100%; 
+    height: auto; 
+}
+
+/* Cegah horizontal scroll global */
+html, body { 
+    overflow-x: hidden; 
+    width: 100%;
+}
+
+/* Pastikan semua container tidak overflow */
+.container,
+.hero-section,
+.products-section,
+.about-section,
+.news-section,
+.stats-bar,
+.footer {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* ===== CONTAINER ===== */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+    padding: 0.1rem 0;
+}
+
+.navbar-container {
+    padding: 0.3rem 1rem;
+}
+
+.navbar-brand img {
+    height: 38px;
+    width: auto;
+}
+
+.navbar-menu {
+    gap: 0.15rem;
+}
+
+.navbar-menu a,
+.navbar-menu .logout-btn {
+    font-size: 0.8rem;
+    padding: 0.45rem 0.55rem;
+    white-space: nowrap;
+    gap: 0.3rem;
+}
+
+.navbar-menu .logout-btn {
+    margin-left: 0.25rem;
+}
+
+.admin-login-item a {
+    margin-left: 0.25rem;
+    padding: 0.45rem 0.55rem;
+    font-size: 0.85rem;
+}
+
+.cart-nav-btn {
+    margin-left: 0.25rem;
+    padding: 0.45rem 0.55rem;
+    font-size: 0.85rem;
+}
+
+/* ===== PAGE HEADERS (semua halaman) ===== */
+.about-header,
+.contact-header,
+.act-header,
+.news-page-header,
+.products-header,
+.farma-header,
+.detail-page-header {
+    padding: 3.5rem 0 2.5rem;
+}
+
+/* Dekorasi icon header — kecilkan di semua ukuran */
+.header-deco-icon-1 { font-size: 3rem !important; }
+.header-deco-icon-2 { font-size: 2.2rem !important; }
+.header-deco-icon-3 { font-size: 1.8rem !important; }
+
+/* ===== BREADCRUMB ===== */
+.breadcrumb-custom {
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+    margin-top: 3rem;
+}
+
+/* ===== CART DRAWER ===== */
+.cart-drawer {
+    width: min(420px, 100vw);
+    right: -100vw;
+}
+
+.cart-drawer.open {
+    right: 0;
+}
+
+/* ===== LIGHTBOX ===== */
+.lightbox {
+    padding: 1rem;
+}
+
+.lightbox-inner {
+    max-width: min(900px, 100%);
+}
+
+.lightbox-inner img {
+    max-height: 75vh;
+    width: 100%;
+    object-fit: contain;
+}
+
+/* ===== PAGINATION ===== */
+.pagination-wrap {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.pagination-btns {
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* ===== FILTER BAR ===== */
+.filter-bar,
+.news-filter-bar {
+    flex-wrap: wrap;
+}
+
+/* ===== MEDICINE CARDS GRID ===== */
+.medicines-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+/* ===== FARMAKOLOGI LAYOUT ===== */
+.farma-layout {
+    align-items: start;
+}
+
+/* ===== DETAIL PAGE ===== */
+.detail-wrapper {
+    padding: 0 1rem;
+}
+
+/* ===== ABOUT PAGE ===== */
+.about-main .container {
+    max-width: 860px;
+}
+
+/* ===== CONTACT GRID ===== */
+.contact-grid {
+    align-items: start;
+}
+
+/* ===== FLOAT BUTTONS ===== */
+.float-wrap {
+    bottom: 1.25rem;
+    right: 1.25rem;
+}
+
+/* Pastikan float buttons tidak overlap dengan content */
+.float-links {
+    align-items: flex-end;
+}
+
+.float-btn {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.float-btn:hover {
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+/* ===================================================
+   TABLET (max 1024px)
+   =================================================== */
+@media (max-width: 1024px) {
+    /* Navbar tablet */
+    .navbar-container {
+        padding: 0.25rem 1rem;
+    }
+
+    .navbar-brand img {
+        height: 34px;
+    }
+
+    .navbar-menu a,
+    .navbar-menu .logout-btn {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.45rem;
+        gap: 0.25rem;
+    }
+
+    .navbar-menu {
+        gap: 0.1rem;
+    }
+
+    .admin-login-item a {
+        padding: 0.4rem 0.45rem;
+        font-size: 0.8rem;
+        margin-left: 0.2rem;
+    }
+
+    .cart-nav-btn {
+        padding: 0.4rem 0.45rem;
+        font-size: 0.8rem;
+        margin-left: 0.2rem;
+    }
+
+    /* Footer */
+    .footer-content {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+    /* Farmakologi sidebar */
+    .farma-layout {
+        grid-template-columns: 220px 1fr;
+        gap: 1.25rem;
+    }
+
+    /* Detail grid */
+    .detail-grid {
+        grid-template-columns: 1fr 1.1fr;
+    }
+
+    /* Contact grid */
+    .contact-grid {
+        grid-template-columns: 1fr 1.4fr;
+        gap: 1.5rem;
+    }
+
+    /* About VM grid */
+    .vm-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    /* News grid */
+    .news-grid {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    }
+
+    /* Products grid */
+    .medicines-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    /* Hero visual */
+    .hero-visual {
+        height: 420px;
+    }
+
+    /* Float stats */
+    .float-stat-1 { left: -0.5rem; }
+    .float-stat-2 { right: -0.5rem; }
+}
+
+/* ===================================================
+   MOBILE (max 768px)
+   =================================================== */
+@media (max-width: 768px) {
+    /* ---- Navbar ---- */
+    .hamburger-menu {
+        display: flex !important;
+    }
+
+    .navbar-container {
+        padding: 0.4rem 1rem;
+        gap: 0.5rem;
+    }
+
+    .navbar-brand img {
+        height: 32px;
+    }
+
+    .navbar-menu {
+        position: fixed;
+        left: 0;
+        top: 52px;
+        width: 100%;
+        height: calc(100vh - 52px);
+        background: linear-gradient(135deg, #1565C0 0%, #1976D2 50%, #1E88E5 100%);
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 0;
+        padding: 1rem;
+        max-height: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        transition: max-height 0.35s ease;
+        z-index: 100;
+    }
+
+    .navbar-menu.active {
+        max-height: calc(100vh - 52px);
+    }
+
+    .navbar-menu li {
+        width: 100%;
+        margin-bottom: 0.25rem;
+    }
+
+    .navbar-menu a,
+    .navbar-menu .logout-btn {
+        padding: 0.8rem 1rem;
+        font-size: 0.95rem;
+        display: flex;
+        width: 100%;
+        border-radius: 8px;
+        justify-content: flex-start;
+        gap: 0.5rem;
+    }
+
+    .navbar-menu .logout-btn {
+        margin-left: 0;
+        margin-top: 0.5rem;
+        border: 1px solid rgba(220, 38, 38, 0.4);
+    }
+
+    .admin-login-item a {
+        margin-left: 0;
+        padding: 0.8rem 1rem;
+        font-size: 0.95rem;
+    }
+
+    .cart-nav-btn {
+        margin-left: 0;
+        padding: 0.45rem;
+        font-size: 0.95rem;
+    }
+
+    /* ---- Page Headers ---- */
+    .about-header,
+    .contact-header,
+    .act-header,
+    .news-page-header,
+    .products-header,
+    .farma-header,
+    .detail-page-header {
+        padding: 2.5rem 0 2rem;
+    }
+
+    .about-header h1,
+    .contact-header h1,
+    .act-header h1,
+    .news-page-header h1,
+    .products-header h1,
+    .farma-header h1 {
+        font-size: clamp(1.6rem, 5vw, 2.2rem) !important;
+    }
+
+    /* Sembunyikan deco icon di mobile agar tidak overflow */
+    .header-deco-icon-1 { font-size: 2rem !important; right: 5% !important; }
+    .header-deco-icon-2 { font-size: 1.5rem !important; right: 18% !important; }
+    .header-deco-icon-3 { display: none !important; }
+
+    /* ---- Hero Section ---- */
+    .hero-section {
+        padding: 3.5rem 0 2.5rem;
+        min-height: auto;
+    }
+
+    /* Hero particles — kecilkan di mobile */
+    .hero-particles .hp {
+        opacity: var(--o, 0.1);
+    }
+
+    .hp-capsule {
+        width: 42px;
+        height: 17px;
+        border-radius: 8px;
+    }
+
+    .hp-tablet {
+        width: 28px;
+        height: 17px;
+        border-radius: 8px;
+    }
+
+    .hp-pill {
+        width: 15px;
+        height: 15px;
+    }
+
+    .hp-cross {
+        width: 18px;
+        height: 18px;
+    }
+
+    .hp-icon {
+        font-size: 1rem;
+    }
+
+    .hero-visual {
+        height: 280px;
+        margin-top: 1.5rem;
+    }
+
+    .main-hero-image {
+        width: 100%;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        border-radius: 16px;
+        position: relative;
+        inset: auto;
+    }
+
+    .small-photos {
+        display: none !important;
+    }
+
+    .float-stat {
+        display: none !important;
+    }
+
+    .hero-dot-grid {
+        display: none !important;
+    }
+
+    .hero-title {
+        font-size: clamp(1.7rem, 6vw, 2.4rem) !important;
+    }
+
+    .hero-desc {
+        font-size: 0.92rem;
+        max-width: 100%;
+    }
+
+    .hero-desc-sub {
+        font-size: 0.85rem;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .btn-hero-primary,
+    .btn-hero-outline {
+        text-align: center;
+        justify-content: center;
+        padding: 0.75rem 1.5rem;
+        font-size: 0.95rem;
+    }
+
+    /* ---- Stats Bar ---- */
+    .stats-bar {
+        padding: 1.5rem 0;
+    }
+
+    .stat-number {
+        font-size: 1.6rem !important;
+    }
+
+    /* ---- About Section (home) ---- */
+    .about-section {
+        padding: 2.5rem 0;
+    }
+
+    .about-image-main {
+        width: 240px !important;
+        height: 240px !important;
+        margin: 0 auto;
+    }
+
+    .about-stats-card {
+        position: static !important;
+        margin-top: 1.25rem;
+        left: auto !important;
+        bottom: auto !important;
+    }
+
+    .about-badge {
+        top: -10px;
+        right: -10px;
+    }
+
+    .feature-item {
+        flex-direction: row;
+        text-align: left;
+    }
+
+    /* ---- Products Page ---- */
+    .products-main {
+        padding: 1.75rem 0 3rem;
+    }
+
+    .filter-bar {
+        flex-direction: column;
+        padding: 1rem;
+        gap: 0.75rem;
+    }
+
+    .filter-group {
+        width: 100%;
+        min-width: unset !important;
+    }
+
+    .filter-bar > div:last-child {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .btn-filter,
+    .btn-reset {
+        flex: 1;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .medicines-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.85rem;
+    }
+
+    .medicine-image {
+        height: 150px !important;
+    }
+
+    .medicine-body {
+        padding: 0.85rem !important;
+    }
+
+    .medicine-name {
+        font-size: 0.88rem !important;
+    }
+
+    .medicine-price {
+        font-size: 1rem !important;
+    }
+
+    /* ---- Cart Drawer ---- */
+    .cart-drawer {
+        width: 100vw;
+        right: -100vw;
+    }
+
+    .cart-drawer.open {
+        right: 0;
+    }
+
+    /* ---- News Page ---- */
+    .news-main {
+        padding: 1.75rem 0 3rem;
+    }
+
+    .news-filter-bar {
+        flex-direction: column;
+        padding: 1rem;
+        gap: 0.75rem;
+    }
+
+    .news-filter-bar .filter-group {
+        width: 100%;
+        min-width: unset !important;
+    }
+
+    .news-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
+    .news-image {
+        height: 180px !important;
+    }
+
+    /* ---- Farmakologi ---- */
+    .farma-main {
+        padding: 1.75rem 0 3rem;
+    }
+
+    .farma-layout {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .farma-sidebar {
+        position: static !important;
+        top: auto !important;
+    }
+
+    .sidebar-list {
+        max-height: 180px;
+    }
+
+    .farma-stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.6rem;
+    }
+
+    .farma-stat-card {
+        padding: 0.75rem;
+    }
+
+    .farma-stat-card .num {
+        font-size: 1.3rem !important;
+    }
+
+    .symptom-row {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+        padding: 0.85rem 1rem;
+    }
+
+    .symptom-header {
+        display: none;
+    }
+
+    .disease-card-header {
+        padding: 0.85rem 1rem;
+    }
+
+    /* ---- Activities ---- */
+    .act-main {
+        padding: 1.75rem 0 3rem;
+    }
+
+    .photo-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.85rem;
+    }
+
+    .photo-wrap {
+        height: 170px !important;
+    }
+
+    /* Lightbox mobile */
+    .lightbox-inner img {
+        max-height: 60vh;
+    }
+
+    .lightbox-close {
+        top: -2rem;
+        font-size: 1.5rem;
+    }
+
+    /* ---- About Page ---- */
+    .about-main {
+        padding: 1.75rem 0 3rem;
+    }
+
+    .section-card {
+        padding: 1.25rem !important;
+    }
+
+    .vm-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0.85rem;
+    }
+
+    .values-grid {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+
+    .cta-box {
+        padding: 1.5rem 1.25rem;
+    }
+
+    /* ---- Contact Page ---- */
+    .contact-main {
+        padding: 1.75rem 0 3rem;
+    }
+
+    .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr !important;
+        gap: 0;
+    }
+
+    .form-card {
+        padding: 1.25rem;
+    }
+
+    .info-card {
+        padding: 1.25rem;
+    }
+
+    /* ---- Detail Page ---- */
+    .detail-wrapper {
+        margin: 1.25rem auto;
+        padding: 0 0.75rem;
+    }
+
+    .detail-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .detail-image-col {
+        padding: 1.25rem !important;
+    }
+
+    .detail-image {
+        position: static !important;
+        max-width: 220px !important;
+        margin: 0 auto;
+    }
+
+    .detail-info {
+        padding: 1.25rem !important;
+        border-left: none !important;
+        border-top: 1px solid #f3f4f6;
+    }
+
+    .related-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem;
+    }
+
+    .related-section {
+        padding: 1.25rem !important;
+    }
+
+    /* ---- Footer ---- */
+    .footer {
+        padding: 2.5rem 0 0;
+        margin-top: 2rem;
+    }
+
+    .footer-content {
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        padding-bottom: 1.75rem;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    /* ---- Float Buttons ---- */
+    .float-wrap {
+        bottom: 1rem;
+        right: 1rem;
+    }
+
+    .float-btn {
+        width: 44px !important;
+        height: 44px !important;
+        font-size: 1.25rem !important;
+    }
+
+    .float-btn-wa {
+        width: 44px !important;
+        height: 44px !important;
+        font-size: 1.5rem !important;
+        margin-top: 0 !important;
+    }
+
+    .float-toggle {
+        width: 46px !important;
+        height: 46px !important;
+    }
+}
+
+/* ===================================================
+   SMALL MOBILE (max 480px)
+   =================================================== */
+@media (max-width: 480px) {
+    /* Navbar */
+    .navbar-container {
+        padding: 0.35rem 0.75rem;
+    }
+
+    .navbar-brand img {
+        height: 30px;
+    }
+
+    .navbar-menu {
+        top: 48px;
+        height: calc(100vh - 48px);
+        max-height: 0;
+        padding: 0.75rem;
+    }
+
+    .navbar-menu.active {
+        max-height: calc(100vh - 48px);
+    }
+
+    .navbar-menu a,
+    .navbar-menu .logout-btn {
+        padding: 0.75rem 0.875rem;
+        font-size: 0.9rem;
+    }
+
+    .cart-nav-btn {
+        padding: 0.4rem;
+        font-size: 0.9rem;
+    }
+
+    /* Hero */
+    .hero-section {
+        padding: 3rem 0 2rem;
+    }
+
+    /* Hero particles — lebih kecil lagi */
+    .hero-particles .hp {
+        opacity: var(--o, 0.08);
+    }
+
+    .hp-capsule {
+        width: 36px;
+        height: 15px;
+        border-radius: 7px;
+    }
+
+    .hp-tablet {
+        width: 24px;
+        height: 15px;
+        border-radius: 7px;
+    }
+
+    .hp-pill {
+        width: 12px;
+        height: 12px;
+    }
+
+    .hp-cross {
+        width: 15px;
+        height: 15px;
+    }
+
+    .hp-icon {
+        font-size: 0.85rem;
+    }
+
+    .hero-visual {
+        height: 220px;
+    }
+
+    .hero-title {
+        font-size: clamp(1.4rem, 7vw, 1.8rem) !important;
+    }
+
+    .hero-badge {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.75rem;
+    }
+
+    .hero-desc {
+        font-size: 0.85rem;
+    }
+
+    .hero-desc-sub {
+        font-size: 0.8rem;
+    }
+
+    /* Products grid — 2 kolom tetap tapi lebih kecil */
+    .medicines-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.65rem;
+    }
+
+    .medicine-image {
+        height: 120px !important;
+    }
+
+    .medicine-body {
+        padding: 0.65rem !important;
+    }
+
+    .medicine-name {
+        font-size: 0.82rem !important;
+    }
+
+    .medicine-price {
+        font-size: 0.9rem !important;
+    }
+
+    .medicine-btn,
+    .btn-cart {
+        font-size: 0.78rem !important;
+        padding: 0.5rem !important;
+    }
+
+    /* Activities grid */
+    .photo-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.6rem;
+    }
+
+    .photo-wrap {
+        height: 130px !important;
+    }
+
+    .photo-body {
+        padding: 0.65rem 0.75rem;
+    }
+
+    .photo-title {
+        font-size: 0.85rem !important;
+    }
+
+    /* News grid */
+    .news-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Farmakologi stats */
+    .farma-stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.4rem;
+    }
+
+    .farma-stat-card {
+        padding: 0.6rem 0.5rem;
+    }
+
+    .farma-stat-card .num {
+        font-size: 1.1rem !important;
+    }
+
+    .farma-stat-card .lbl {
+        font-size: 0.68rem !important;
+    }
+
+    /* About page */
+    .section-card {
+        padding: 1rem !important;
+    }
+
+    .stat-box .num {
+        font-size: 1.4rem !important;
+    }
+
+    /* Contact */
+    .form-group textarea {
+        min-height: 100px;
+    }
+
+    /* Detail */
+    .detail-wrapper {
+        margin: 1rem auto;
+        padding: 0 0.5rem;
+    }
+
+    .detail-image {
+        max-width: 180px !important;
+    }
+
+    .price {
+        font-size: clamp(1.3rem, 5vw, 1.75rem) !important;
+    }
+
+    .stock-info {
+        flex-direction: row;
+        gap: 0.5rem;
+    }
+
+    .stock-item {
+        padding: 0.65rem 0.5rem;
+    }
+
+    .related-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.6rem;
+    }
+
+    .related-image {
+        height: 100px !important;
+    }
+
+    /* Footer */
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
+    .footer {
+        padding: 2rem 0 0;
+    }
+
+    /* Pagination */
+    .page-btn {
+        padding: 0.35rem 0.55rem;
+        font-size: 0.8rem;
+        min-width: 30px;
+    }
+
+    /* Float buttons */
+    .float-wrap {
+        bottom: 0.75rem;
+        right: 0.75rem;
+    }
+}
+
+/* ===================================================
+   EXTRA SMALL (max 360px)
+   =================================================== */
+@media (max-width: 360px) {
+    .container {
+        padding: 0 0.75rem;
+    }
+
+    /* Hero particles — paling kecil */
+    .hero-particles .hp {
+        opacity: var(--o, 0.06);
+    }
+
+    .hp-capsule {
+        width: 30px;
+        height: 12px;
+        border-radius: 6px;
+    }
+
+    .hp-tablet {
+        width: 20px;
+        height: 12px;
+        border-radius: 6px;
+    }
+
+    .hp-pill {
+        width: 10px;
+        height: 10px;
+    }
+
+    .hp-cross {
+        width: 12px;
+        height: 12px;
+    }
+
+    .hp-icon {
+        font-size: 0.75rem;
+    }
+
+    .hero-title {
+        font-size: clamp(1.25rem, 8vw, 1.6rem) !important;
+    }
+
+    .medicines-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+
+    .medicine-image {
+        height: 100px !important;
+    }
+
+    .photo-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+
+    .photo-wrap {
+        height: 110px !important;
+    }
+
+    .farma-stats {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+}
