@@ -174,12 +174,19 @@
 
 {{-- ===== CART JAVASCRIPT ===== --}}
 <script>
-// Satu keranjang untuk semua halaman - key: medikpedia_cart
+// Satu keranjang untuk semua halaman - key default: medikpedia_cart
 const WA = '6285890007359';
-let cart = JSON.parse(localStorage.getItem('medikpedia_cart') || '[]');
+const CART_DEFAULT_SETTINGS = {
+  storageKey: 'medikpedia_cart',
+  receiptStoreName: 'MEDIKPEDIA',
+  receiptStoreAddress: 'Jl. Letjen Suprapto No.1, Sumur Batu, Kec. Kemayoran, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10640',
+  receiptFilePrefix: 'struk-medikpedia'
+};
+const CART_CONFIG = Object.assign({}, CART_DEFAULT_SETTINGS, window.cartSettings || {});
+let cart = JSON.parse(localStorage.getItem(CART_CONFIG.storageKey) || '[]');
 
 function save() {
-  localStorage.setItem('medikpedia_cart', JSON.stringify(cart));
+  localStorage.setItem(CART_CONFIG.storageKey, JSON.stringify(cart));
   syncBadge();
 }
 
@@ -391,40 +398,77 @@ function buildReceiptPdf(orderData) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: 'pt', format: 'a4', orientation: 'portrait' });
   const pageWidth = doc.internal.pageSize.getWidth();
-  // use full printable width with comfortable margins
+  const pageHeight = doc.internal.pageSize.getHeight();
   const leftMargin = 40;
   const receiptWidth = pageWidth - leftMargin * 2;
-  const labelWidth = 120; // width reserved for labels like 'Pembeli'
+  const labelWidth = 120;
   const valueX = leftMargin + labelWidth;
-  // Columns for product rows
   const rightX = leftMargin + receiptWidth;
-  // reserve columns: qty column, unit price column, and subtotal at far right
-  const qtyColWidth = 60; // small width for qty
-  const unitPriceColWidth = 100; // width for unit price
-  const subtotalColWidth = 80; // width for subtotal
-  const subtotalX = rightX; // position for subtotal (right aligned)
-  const unitPriceX = rightX - subtotalColWidth - 8; // right edge for unit price column
-  const qtyX = unitPriceX - unitPriceColWidth; // right edge for qty column
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(12);
+  const unitPriceColWidth = 100;
+  const subtotalColWidth = 80;
+  const subtotalX = rightX;
+  const unitPriceX = rightX - subtotalColWidth - 8;
+  const qtyX = unitPriceX - 60;
+  const bottomMargin = 50;
   let y = 80;
+  let pageNum = 1;
+
   const line = (text, options = {}) => {
     const align = options.align || 'left';
     const x = align === 'center' ? leftMargin + receiptWidth / 2 : align === 'right' ? rightX : leftMargin;
     doc.text(text, x, y, { align });
     y += (options.spacing || 18);
   };
+
   const drawLine = () => { doc.setDrawColor(180,180,180); doc.line(leftMargin, y, rightX, y); y += 8; };
-  doc.setFont('helvetica', 'bold'); doc.setFontSize(20);
-  line('MEDIKPEDIA', { align: 'center', spacing: 20 });
-  doc.setFont('helvetica', 'normal'); doc.setFontSize(12);
-  line('Jl. Letjen Suprapto No.1, Sumur Batu', { align: 'center', spacing: 12 });
-  line('Kec. Kemayoran, Jakarta Pusat, DKI Jakarta 10640', { align: 'center', spacing: 12 });
-  doc.setFontSize(13);
-  line('Apotik Online Terpercaya', { align: 'center', spacing: 12 });
-  line('www.medikpedia.com', { align: 'center', spacing: 16 });
-  drawLine();
-  // Order meta (two-column layout)
+
+  const ensureSpace = (space = 0) => {
+    if (y + space > pageHeight - bottomMargin) {
+      doc.addPage();
+      pageNum += 1;
+      y = 80;
+      drawReceiptHeader();
+      startProductSection();
+    }
+  };
+
+  const addressLines = CART_CONFIG.receiptStoreAddress.split(/,\s*/);
+
+  const drawReceiptHeader = () => {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(20);
+    doc.text(CART_CONFIG.receiptStoreName, leftMargin + receiptWidth / 2, y, { align: 'center' });
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.text(`Halaman ${pageNum}`, rightX, 40, { align: 'right' });
+    y += 28;
+    doc.setFontSize(12);
+    addressLines.forEach((lineText) => {
+      doc.text(lineText, leftMargin + receiptWidth / 2, y, { align: 'center' });
+      y += 14;
+    });
+    if (CART_CONFIG.receiptStoreName === CART_DEFAULT_SETTINGS.receiptStoreName) {
+      doc.setFontSize(13);
+      doc.text('Apotik Online Terpercaya', leftMargin + receiptWidth / 2, y, { align: 'center' });
+      y += 14;
+      doc.text('www.medikpedia.com', leftMargin + receiptWidth / 2, y, { align: 'center' });
+      y += 16;
+    } else {
+      y += 16;
+    }
+    drawLine();
+  };
+
+  const startProductSection = () => {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.text('DAFTAR PRODUK', leftMargin + receiptWidth / 2, y, { align: 'center' });
+    y += 21;
+    doc.setFont('helvetica', 'normal');
+  };
+
+  drawReceiptHeader();
+
   const writeMeta = (label, value) => {
     doc.setFontSize(10);
     doc.text(label + ' :', leftMargin, y);
@@ -433,6 +477,7 @@ function buildReceiptPdf(orderData) {
     doc.text(valueLines, valueX, y);
     y += 16 * valueLines.length;
   };
+
   writeMeta('ID Pesanan', `#${orderData.id || '-'}`);
   writeMeta('Tanggal', new Date().toLocaleString('id-ID'));
   if (orderData.buyer_name) writeMeta('Pembeli', orderData.buyer_name);
@@ -449,20 +494,19 @@ function buildReceiptPdf(orderData) {
     if (orderData.sipa) writeMeta('SIPA', orderData.sipa);
   }
   drawLine();
-  doc.setFont('helvetica', 'bold'); doc.setFontSize(11);
-  line('DAFTAR PRODUK', { align: 'center', spacing: 21 });
-  doc.setFont('helvetica', 'normal');
+  startProductSection();
+
   let total = 0;
   cart.forEach(it => {
-    const subtotal = it.price * it.qty; total += subtotal;
-    // wrap name so qty and price columns stay fixed
+    const subtotal = it.price * it.qty;
+    total += subtotal;
     const nameWrapWidth = qtyX - leftMargin - 12;
     const nameLines = doc.splitTextToSize(it.name, nameWrapWidth);
     nameLines.forEach((ln, idx) => {
-      const textX = leftMargin + (idx === 0 ? 0 : 8); // indent wrapped lines
+      ensureSpace(18);
+      const textX = leftMargin + (idx === 0 ? 0 : 8);
       doc.text(ln, textX, y);
       if (idx === 0) {
-        // qty, unit price, and subtotal in separate right-aligned columns
         doc.text(String(it.qty), qtyX, y, { align: 'right' });
         doc.text(`x ${rp(it.price)}`, unitPriceX, y, { align: 'right' });
         doc.text(rp(subtotal), subtotalX, y, { align: 'right' });
@@ -471,10 +515,9 @@ function buildReceiptPdf(orderData) {
     });
     y += 6;
   });
-  // add small gap so products don't touch the separator line
-  y += 8;
+
+  ensureSpace(80);
   drawLine();
-  // add extra spacing before TOTAL to avoid crowding
   y += 12;
   doc.setFont('helvetica', 'bold'); doc.setFontSize(18);
   doc.text('TOTAL', leftMargin, y);
@@ -557,7 +600,7 @@ function downloadReceiptAndClose() {
   const pdfUrl = buildReceiptPdf(window.orderPayload || {});
   const a = document.createElement('a');
   a.href = pdfUrl;
-  a.download = `struk-medikpedia-${window.orderPayload?.id || Date.now()}.pdf`;
+  a.download = `${CART_CONFIG.receiptFilePrefix}-${window.orderPayload?.id || Date.now()}.pdf`;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(pdfUrl), 100);
 }

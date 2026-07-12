@@ -378,6 +378,7 @@
             padding: 0 !important;
             font-size: 16px;
             line-height: 1.5;
+            min-height: 100%;
         }
 
         html {
@@ -385,15 +386,20 @@
             scroll-padding-top: var(--navbar-height, 65px);
             background: linear-gradient(160deg, #dbeafe 0%, #ede9fe 35%, #d1fae5 70%, #dbeafe 100%);
             background-attachment: fixed;
-            min-height: 100%;
         }
 
         body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: transparent;
-            min-height: 100vh;
             color: var(--dark);
             padding-top: var(--navbar-height, 65px);
+        }
+
+        main {
+            flex: 1;
         }
 
         /* Semua konten di atas canvas */
@@ -1247,7 +1253,7 @@
     </script>
 
     <script>
-        // Cart badge sync - pakai satu key: medikpedia_cart
+        // Cart badge sync - gunakan key khusus jika halaman mendefinisikan cartSettings
         (function() {
             // Migrasi sekali: jika ada key lama retail/grosir, gabungkan ke key utama
             ['medikpedia_cart_retail', 'medikpedia_cart_grosir'].forEach(function(oldKey) {
@@ -1265,7 +1271,8 @@
                 } catch(e) {}
             });
 
-            const cart = JSON.parse(localStorage.getItem('medikpedia_cart') || '[]');
+            const storageKey = (window.cartSettings && window.cartSettings.storageKey) ? window.cartSettings.storageKey : 'medikpedia_cart';
+            const cart = JSON.parse(localStorage.getItem(storageKey) || '[]');
             const total = cart.reduce(function(s, i) { return s + i.qty; }, 0);
             
             const badge = document.getElementById('cartBadgeNav');

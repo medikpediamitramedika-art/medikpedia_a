@@ -1,8 +1,8 @@
-﻿@extends('layouts.frontend')
+﻿
 
-@section('title', 'PT. Surya Sharone Abadi - Produk PBF')
+<?php $__env->startSection('title', 'PT. Surya Sharone Abadi - Produk PBF'); ?>
 
-@section('styles')
+<?php $__env->startSection('styles'); ?>
 <style>
     .products-header {
         background: linear-gradient(135deg, #0047b3 0%, #0f4c81 40%, #fb8c00 100%);
@@ -416,27 +416,27 @@
         .medicine-btn, .btn-cart { font-size: 0.82rem; padding: 0.55rem; }
     }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
 <div class="products-header">
     <div class="container">
         <div class="hero-panel">
-            <img src="{{ asset('LOGO SURYA SHARONE.png') }}" alt="PT. Surya Sharone Abadi" class="brand-logo" />
+            <img src="<?php echo e(asset('LOGO SURYA SHARONE.png')); ?>" alt="PT. Surya Sharone Abadi" class="brand-logo" />
             <div class="brand-copy">
                 <div class="breadcrumb-custom" style="margin:0 0 0.75rem;">
-                    <a href="{{ route('home') }}"><i class="fa-solid fa-house"></i> Home</a>
+                    <a href="<?php echo e(route('home')); ?>"><i class="fa-solid fa-house"></i> Home</a>
                     <span>/</span>
                     <span class="current">PT. Surya Sharone Abadi</span>
                 </div>
                 <h1><i class="fa-solid fa-box"></i> Katalog Produk PBF</h1>
-                <p>{{ $total }} produk PBF tersedia dari PT. Surya Sharone Abadi untuk mitra apotek dan distributor yang membutuhkan stok terpercaya.</p>
+                <p><?php echo e($total); ?> produk PBF tersedia dari PT. Surya Sharone Abadi untuk mitra apotek dan distributor yang membutuhkan stok terpercaya.</p>
                 <p class="brand-address">Jl. Pendawa Jl. Sersan Muis No.99, 2 Ilir, Kec. Ilir Tim. II, Kota Palembang, Sumatera Selatan 30118</p>
                 <div class="partner-logos">
-                    <img src="{{ asset('LOGO 5 PABRIK.png') }}" alt="Mitra 5 Pabrik" class="partner-logo-desktop" />
+                    <img src="<?php echo e(asset('LOGO 5 PABRIK.png')); ?>" alt="Mitra 5 Pabrik" class="partner-logo-desktop" />
                     <div class="partner-card">
-                        <img src="{{ asset('LOGO 5 PABRIK.png') }}" alt="Mitra 5 Pabrik" />
+                        <img src="<?php echo e(asset('LOGO 5 PABRIK.png')); ?>" alt="Mitra 5 Pabrik" />
                     </div>
                 </div>
             </div>
@@ -450,172 +450,173 @@
 <div class="products-main">
     <div class="container">
 
-        {{-- Flash: akses berhasil --}}
-        @if(session('pbf_success'))
+        
+        <?php if(session('pbf_success')): ?>
         <div style="background:#d1fae5;border:1px solid #6ee7b7;border-radius:12px;padding:0.85rem 1.25rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
             <span style="color:#065f46;font-weight:700;font-size:0.9rem;display:flex;align-items:center;gap:0.5rem;">
                 <i class="fa-solid fa-circle-check"></i>
-                {{ session('pbf_success') }}
+                <?php echo e(session('pbf_success')); ?>
+
             </span>
         </div>
-        @endif
+        <?php endif; ?>
 
-        {{-- Info bar: akses aktif + tombol keluar --}}
+        
         <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:0.75rem 1.25rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
             <span style="color:#92400e;font-size:0.85rem;font-weight:600;display:flex;align-items:center;gap:0.5rem;">
                 <i class="fa-solid fa-shield-halved" style="color:#f59e0b;"></i>
                 Anda masuk sebagai mitra PBF terverifikasi
             </span>
-            <form method="POST" action="{{ route('products.pbf.logout') }}" style="margin:0;">
-                @csrf
+            <form method="POST" action="<?php echo e(route('products.pbf.logout')); ?>" style="margin:0;">
+                <?php echo csrf_field(); ?>
                 <button type="submit" style="background:none;border:1.5px solid #f59e0b;color:#92400e;padding:0.35rem 0.9rem;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.2s;">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i> Keluar Akses
                 </button>
             </form>
         </div>
 
-        <form method="GET" action="{{ route('products.pbf') }}" class="filter-bar">
+        <form method="GET" action="<?php echo e(route('products.pbf')); ?>" class="filter-bar">
             <div class="filter-group" style="flex: 2; min-width: 200px;">
                 <label class="filter-label"><i class="fa-solid fa-magnifying-glass"></i> Cari Produk</label>
                 <input type="text" name="search" class="filter-input"
                        placeholder="Nama produk atau deskripsi..."
-                       value="{{ $search }}">
+                       value="<?php echo e($search); ?>">
             </div>
             <div class="filter-group">
                 <label class="filter-label"><i class="fa-solid fa-tag"></i> Kategori</label>
                 <select name="kategori_produk" class="filter-select">
                     <option value="">Semua Kategori</option>
-                    @foreach($kategoriOptions as $k)
-                        @php $icon = match($k) { 'OBAT' => '💊', 'SKINCARE & KOSMETIK' => '✨', 'ALAT KESEHATAN' => '🩺', default => '📦' }; @endphp
-                        <option value="{{ $k }}" @selected(($kategori_produk ?? '') === $k)>{{ $icon }} {{ $k }}</option>
-                    @endforeach
+                    <?php $__currentLoopData = $kategoriOptions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $k): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php $icon = match($k) { 'OBAT' => '💊', 'SKINCARE & KOSMETIK' => '✨', 'ALAT KESEHATAN' => '🩺', default => '📦' }; ?>
+                        <option value="<?php echo e($k); ?>" <?php if(($kategori_produk ?? '') === $k): echo 'selected'; endif; ?>><?php echo e($icon); ?> <?php echo e($k); ?></option>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
             </div>
             <div class="filter-group">
                 <label class="filter-label"><i class="fa-solid fa-building"></i> Perusahaan</label>
                 <select name="perusahaan" class="filter-select">
                     <option value="">Semua Perusahaan</option>
-                    @foreach($perusahaanList as $p)
-                        <option value="{{ $p }}" @selected($perusahaan === $p)>{{ $p }}</option>
-                    @endforeach
+                    <?php $__currentLoopData = $perusahaanList; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $p): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($p); ?>" <?php if($perusahaan === $p): echo 'selected'; endif; ?>><?php echo e($p); ?></option>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
             </div>
             <div class="filter-group">
                 <label class="filter-label"><i class="fa-solid fa-arrow-up-wide-short"></i> Urutkan</label>
                 <select name="sort" class="filter-select">
-                    <option value="terbaru"    @selected($sort === 'terbaru')>Terbaru</option>
-                    <option value="harga_asc"  @selected($sort === 'harga_asc')>Harga Terendah</option>
-                    <option value="harga_desc" @selected($sort === 'harga_desc')>Harga Tertinggi</option>
-                    <option value="nama"       @selected($sort === 'nama')>Nama A–Z</option>
+                    <option value="terbaru"    <?php if($sort === 'terbaru'): echo 'selected'; endif; ?>>Terbaru</option>
+                    <option value="harga_asc"  <?php if($sort === 'harga_asc'): echo 'selected'; endif; ?>>Harga Terendah</option>
+                    <option value="harga_desc" <?php if($sort === 'harga_desc'): echo 'selected'; endif; ?>>Harga Tertinggi</option>
+                    <option value="nama"       <?php if($sort === 'nama'): echo 'selected'; endif; ?>>Nama A–Z</option>
                 </select>
             </div>
             <div style="display: flex; gap: 0.5rem; align-items: flex-end;">
                 <button type="submit" class="btn-filter">
                     <i class="fa-solid fa-magnifying-glass"></i> Cari
                 </button>
-                @if($search || ($kategori_produk ?? '') || $perusahaan || $sort !== 'terbaru')
-                    <a href="{{ route('products.pbf') }}" class="btn-reset">✕ Reset</a>
-                @endif
+                <?php if($search || ($kategori_produk ?? '') || $perusahaan || $sort !== 'terbaru'): ?>
+                    <a href="<?php echo e(route('products.pbf')); ?>" class="btn-reset">✕ Reset</a>
+                <?php endif; ?>
             </div>
         </form>
 
         <div class="result-info">
             <p>
-                Menampilkan <strong>{{ $medicines->firstItem() ?? 0 }}–{{ $medicines->lastItem() ?? 0 }}</strong>
-                dari <strong>{{ $medicines->total() }}</strong> produk
-                @if($search) · "<strong>{{ $search }}</strong>" @endif
-                @if($kategori_produk ?? '') · <strong>{{ $kategori_produk }}</strong> @endif
-                @if($perusahaan) · <strong>{{ $perusahaan }}</strong> @endif
+                Menampilkan <strong><?php echo e($medicines->firstItem() ?? 0); ?>–<?php echo e($medicines->lastItem() ?? 0); ?></strong>
+                dari <strong><?php echo e($medicines->total()); ?></strong> produk
+                <?php if($search): ?> · "<strong><?php echo e($search); ?></strong>" <?php endif; ?>
+                <?php if($kategori_produk ?? ''): ?> · <strong><?php echo e($kategori_produk); ?></strong> <?php endif; ?>
+                <?php if($perusahaan): ?> · <strong><?php echo e($perusahaan); ?></strong> <?php endif; ?>
             </p>
         </div>
 
-        @if($medicines->count() > 0)
+        <?php if($medicines->count() > 0): ?>
             <div class="medicines-grid">
-                @foreach($medicines as $medicine)
+                <?php $__currentLoopData = $medicines; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $medicine): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div class="medicine-card">
                         <div class="medicine-image">
-                            @if($medicine->gambar)
-                                <img src="{{ url('storage/' . $medicine->gambar) }}" alt="{{ $medicine->nama_obat }}">
-                            @else
+                            <?php if($medicine->gambar): ?>
+                                <img src="<?php echo e(url('storage/' . $medicine->gambar)); ?>" alt="<?php echo e($medicine->nama_obat); ?>">
+                            <?php else: ?>
                                 <i class="fa-solid fa-pills" style="color:#90caf9;font-size:3rem;"></i>
-                            @endif
+                            <?php endif; ?>
                         </div>
                         <div class="medicine-body">
                             
-                            <span class="medicine-company">{{ $medicine->kategori }}</span>
-                            <h3 class="medicine-name">{{ $medicine->nama_obat }}</h3>
+                            <span class="medicine-company"><?php echo e($medicine->kategori); ?></span>
+                            <h3 class="medicine-name"><?php echo e($medicine->nama_obat); ?></h3>
                             
-                            <div class="medicine-price">{{ $medicine->getFormattedPrice() }}</div>
-                            @if($medicine->stok > 10)
-                                <span class="stock-badge stock-available"><i class="fa-solid fa-circle-check"></i> {{ $medicine->stok }} tersedia</span>
-                            @elseif($medicine->stok > 0)
-                                <span class="stock-badge stock-low"><i class="fa-solid fa-triangle-exclamation"></i> {{ $medicine->stok }} tersisa</span>
-                            @else
+                            <div class="medicine-price"><?php echo e($medicine->getFormattedPrice()); ?></div>
+                            <?php if($medicine->stok > 10): ?>
+                                <span class="stock-badge stock-available"><i class="fa-solid fa-circle-check"></i> <?php echo e($medicine->stok); ?> tersedia</span>
+                            <?php elseif($medicine->stok > 0): ?>
+                                <span class="stock-badge stock-low"><i class="fa-solid fa-triangle-exclamation"></i> <?php echo e($medicine->stok); ?> tersisa</span>
+                            <?php else: ?>
                                 <span class="stock-badge stock-out"><i class="fa-solid fa-circle-xmark"></i> Habis</span>
-                            @endif
-                            <a href="{{ route('medicines.show', $medicine->id) }}" class="medicine-btn">
+                            <?php endif; ?>
+                            <a href="<?php echo e(route('medicines.show', $medicine->id)); ?>" class="medicine-btn">
                                 Lihat Detail <i class="fa-solid fa-arrow-right"></i>
                             </a>
-                            @if($medicine->stok > 0)
-                            <button class="btn-cart" onclick="addToCart({{ $medicine->id }}, '{{ addslashes($medicine->nama_obat) }}', {{ $medicine->harga }}, '{{ $medicine->gambar ? url('storage/'.$medicine->gambar) : '' }}', this)">
+                            <?php if($medicine->stok > 0): ?>
+                            <button class="btn-cart" onclick="addToCart(<?php echo e($medicine->id); ?>, '<?php echo e(addslashes($medicine->nama_obat)); ?>', <?php echo e($medicine->harga); ?>, '<?php echo e($medicine->gambar ? url('storage/'.$medicine->gambar) : ''); ?>', this)">
                                 <i class="fa-solid fa-cart-plus"></i> Tambah ke Keranjang
                             </button>
-                            @endif
+                            <?php endif; ?>
                         </div>
                     </div>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
 
             <div class="pagination-wrap">
-                <p class="info">Halaman {{ $medicines->currentPage() }} dari {{ $medicines->lastPage() }}</p>
+                <p class="info">Halaman <?php echo e($medicines->currentPage()); ?> dari <?php echo e($medicines->lastPage()); ?></p>
                 <div class="pagination-btns">
-                    @if($medicines->onFirstPage())
+                    <?php if($medicines->onFirstPage()): ?>
                         <span class="page-btn disabled">‹</span>
-                    @else
-                        <a href="{{ $medicines->previousPageUrl() }}" class="page-btn">‹</a>
-                    @endif
+                    <?php else: ?>
+                        <a href="<?php echo e($medicines->previousPageUrl()); ?>" class="page-btn">‹</a>
+                    <?php endif; ?>
 
-                    @foreach($medicines->getUrlRange(1, $medicines->lastPage()) as $page => $url)
-                        @if($page == $medicines->currentPage())
-                            <span class="page-btn active">{{ $page }}</span>
-                        @elseif($page == 1 || $page == $medicines->lastPage() || abs($page - $medicines->currentPage()) <= 2)
-                            <a href="{{ $url }}" class="page-btn">{{ $page }}</a>
-                        @elseif(abs($page - $medicines->currentPage()) == 3)
+                    <?php $__currentLoopData = $medicines->getUrlRange(1, $medicines->lastPage()); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $page => $url): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php if($page == $medicines->currentPage()): ?>
+                            <span class="page-btn active"><?php echo e($page); ?></span>
+                        <?php elseif($page == 1 || $page == $medicines->lastPage() || abs($page - $medicines->currentPage()) <= 2): ?>
+                            <a href="<?php echo e($url); ?>" class="page-btn"><?php echo e($page); ?></a>
+                        <?php elseif(abs($page - $medicines->currentPage()) == 3): ?>
                             <span class="page-btn disabled">…</span>
-                        @endif
-                    @endforeach
+                        <?php endif; ?>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
-                    @if($medicines->hasMorePages())
-                        <a href="{{ $medicines->nextPageUrl() }}" class="page-btn"></a>
-                    @else
+                    <?php if($medicines->hasMorePages()): ?>
+                        <a href="<?php echo e($medicines->nextPageUrl()); ?>" class="page-btn"></a>
+                    <?php else: ?>
                         <span class="page-btn disabled"></span>
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
 
-        @else
+        <?php else: ?>
             <div class="empty-state">
                 <i class="fa-solid fa-box-open" style="font-size:3.5rem;color:#d1d5db;"></i>
                 <h3>Produk tidak ditemukan</h3>
                 <p>
-                    @if($search || ($kategori_produk ?? ''))
+                    <?php if($search || ($kategori_produk ?? '')): ?>
                         Coba ubah kata kunci atau filter pencarian.
-                    @else
+                    <?php else: ?>
                         Belum ada produk tersedia.
-                    @endif
+                    <?php endif; ?>
                 </p>
-                @if($search || ($kategori_produk ?? '') || $perusahaan)
-                    <a href="{{ route('products.pbf') }}" class="btn-reset" style="display:inline-block;margin-top:1rem;">✕ Hapus Filter</a>
-                @endif
+                <?php if($search || ($kategori_produk ?? '') || $perusahaan): ?>
+                    <a href="<?php echo e(route('products.pbf')); ?>" class="btn-reset" style="display:inline-block;margin-top:1rem;">✕ Hapus Filter</a>
+                <?php endif; ?>
             </div>
-        @endif
+        <?php endif; ?>
 
     </div>
 </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('scripts')
+<?php $__env->startSection('scripts'); ?>
 <script>
 window.cartSettings = {
     storageKey: 'medikpedia_cart_pbf',
@@ -624,5 +625,7 @@ window.cartSettings = {
     receiptFilePrefix: 'struk-pt-surya-sharone-abadi'
 };
 </script>
-@include('partials.cart')
-@endsection
+<?php echo $__env->make('partials.cart', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.frontend', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Ali Attaziri\medikpedia_a-main\resources\views/products_pbf.blade.php ENDPATH**/ ?>
