@@ -620,7 +620,7 @@
 window.cartSettings = {
     storageKey: 'medikpedia_cart_pbf',
     receiptStoreName: 'PT. Surya Sharone Abadi',
-    receiptStoreAddress: 'Jl. Pendawa Jl. Sersan Muis No.99, 2 Ilir, Kec. Ilir Tim. II, Kota Palembang, Sumatera Selatan 30118',
+    receiptStoreAddress: 'Jl. Pendawa Jl. Sersan Muis No.99, 2 Ilir, Kec. Ilir Tim. II, Kota Palembang\nSumatera Selatan 30118',
     receiptFilePrefix: 'struk-pt-surya-sharone-abadi'
 };
 </script>

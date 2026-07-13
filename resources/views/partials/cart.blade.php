@@ -114,6 +114,7 @@
     <select id="f_jenis" class="form-inp" onchange="toggleBuyerType()">
       <option value="umum">Umum</option>
       <option value="apotik">Apotik</option>
+      <option value="pbf">PBF</option>
     </select>
     <div id="buyerFieldsUmum">
       <label class="form-lbl">Nama Pemesan <span style="color:#ef4444;">*</span></label>
@@ -144,6 +145,20 @@
       <input id="f_sia" type="text" class="form-inp" placeholder="Nomor SIA">
       <label class="form-lbl">Nomor SIPA <span style="color:#ef4444;">*</span></label>
       <input id="f_sipa" type="text" class="form-inp" placeholder="Nomor SIPA">
+    </div>
+    <div id="buyerFieldsPbf" style="display:none;">
+      <label class="form-lbl">Nama Pemesan <span style="color:#ef4444;">*</span></label>
+      <input id="f_nama_pbf" type="text" class="form-inp" placeholder="Nama pemesan">
+      <label class="form-lbl">No. Izin PBF <span style="color:#ef4444;">*</span></label>
+      <input id="f_no_izin_pbf" type="text" class="form-inp" placeholder="No. Izin PBF">
+      <label class="form-lbl">APJ <span style="color:#ef4444;">*</span></label>
+      <input id="f_apj" type="text" class="form-inp" placeholder="APJ">
+      <label class="form-lbl">No. SIKA <span style="color:#ef4444;">*</span></label>
+      <input id="f_sika" type="text" class="form-inp" placeholder="No. SIKA">
+      <label class="form-lbl">Alamat <span style="color:#ef4444;">*</span></label>
+      <textarea id="f_alamat_pbf" rows="3" class="form-inp" style="resize:vertical;" placeholder="Alamat lengkap"></textarea>
+      <label class="form-lbl">Nomor Tlp <span style="color:#ef4444;">*</span></label>
+      <input id="f_tlp_pbf" type="tel" class="form-inp" placeholder="Nomor telepon">
     </div>
     <label class="form-lbl">Metode Pembayaran <span style="color:#ef4444;">*</span></label>
     <select id="f_payment" class="form-inp">
@@ -388,6 +403,7 @@ function toggleBuyerType() {
   const type = document.getElementById('f_jenis').value;
   document.getElementById('buyerFieldsUmum').style.display   = type === 'umum'   ? '' : 'none';
   document.getElementById('buyerFieldsApotik').style.display = type === 'apotik' ? '' : 'none';
+  document.getElementById('buyerFieldsPbf').style.display    = type === 'pbf'    ? '' : 'none';
 }
 
 function escapePdfText(text) {
@@ -432,7 +448,9 @@ function buildReceiptPdf(orderData) {
     }
   };
 
-  const addressLines = CART_CONFIG.receiptStoreAddress.split(/,\s*/);
+  const addressLines = CART_CONFIG.receiptStoreAddress.includes('\n')
+    ? CART_CONFIG.receiptStoreAddress.split(/\n/).filter(Boolean)
+    : CART_CONFIG.receiptStoreAddress.split(/,\s*/);
 
   const drawReceiptHeader = () => {
     doc.setFont('helvetica', 'bold');
@@ -480,8 +498,12 @@ function buildReceiptPdf(orderData) {
 
   writeMeta('ID Pesanan', `#${orderData.id || '-'}`);
   writeMeta('Tanggal', new Date().toLocaleString('id-ID'));
-  if (orderData.buyer_name) writeMeta('Pembeli', orderData.buyer_name);
-  if (orderData.phone) writeMeta('No. HP', orderData.phone);
+  writeMeta('Jenis Pembeli', orderData.buyer_type === 'apotik' ? 'Apotik' : orderData.buyer_type === 'pbf' ? 'PBF' : 'Umum');
+  if (orderData.buyer_name) writeMeta(orderData.buyer_type === 'pbf' ? 'Nama Pemesan' : 'Pembeli', orderData.buyer_name);
+  if (orderData.no_izin_pbf) writeMeta('No. Izin PBF', orderData.no_izin_pbf);
+  if (orderData.apj) writeMeta('APJ', orderData.apj);
+  if (orderData.sika) writeMeta('No. SIKA', orderData.sika);
+  if (orderData.phone) writeMeta(orderData.buyer_type === 'pbf' ? 'Nomor Tlp' : 'No. HP', orderData.phone);
   if (orderData.address) {
     const addressParts = [orderData.address];
     if (orderData.kecamatan) addressParts.push(orderData.kecamatan);
@@ -489,7 +511,6 @@ function buildReceiptPdf(orderData) {
     writeMeta('Alamat', addressParts.filter(Boolean).join(', '));
   }
   if (orderData.buyer_type === 'apotik') {
-    writeMeta('Jenis', 'Apotik');
     if (orderData.sia) writeMeta('SIA', orderData.sia);
     if (orderData.sipa) writeMeta('SIPA', orderData.sipa);
   }
@@ -562,6 +583,16 @@ async function submitOrder() {
     if (!payload.buyer_name || !document.getElementById('f_nama_apotik').value.trim() || !payload.phone || !payload.address || !payload.sia || !payload.sipa) {
       err.textContent = 'Semua field apotik wajib diisi.'; err.style.display = 'block'; return;
     }
+  } else if (jenis === 'pbf') {
+    payload.buyer_name = document.getElementById('f_nama_pbf').value.trim();
+    payload.phone    = document.getElementById('f_tlp_pbf').value.trim();
+    payload.address  = document.getElementById('f_alamat_pbf').value.trim();
+    payload.no_izin_pbf = document.getElementById('f_no_izin_pbf').value.trim();
+    payload.apj      = document.getElementById('f_apj').value.trim();
+    payload.sika     = document.getElementById('f_sika').value.trim();
+    if (!payload.buyer_name || !payload.phone || !payload.address || !payload.no_izin_pbf || !payload.apj || !payload.sika) {
+      err.textContent = 'Semua field PBF wajib diisi.'; err.style.display = 'block'; return;
+    }
   } else {
     payload.buyer_name = document.getElementById('f_nama').value.trim();
     payload.phone    = document.getElementById('f_hp').value.trim();
@@ -620,6 +651,8 @@ function openWhatsAppOrder() {
   msg += `---\n*Total: ${rp(total)}*\n\n*Data ${window.orderPayload?.buyer_type === 'apotik' ? 'Apotik' : 'Pemesan'}:*\n`;
   if (window.orderPayload?.buyer_type === 'apotik') {
     msg += `- Apotik: ${document.getElementById('f_nama_apotik').value.trim()}\n- Penanggung Jawab: ${window.orderPayload.buyer_name}\n- HP/WA: ${window.orderPayload.phone}\n- Alamat: ${window.orderPayload.address}\n- SIA: ${window.orderPayload.sia}\n- SIPA: ${window.orderPayload.sipa}\n`;
+  } else if (window.orderPayload?.buyer_type === 'pbf') {
+    msg += `- Nama Pemesan: ${window.orderPayload?.buyer_name}\n- No. Izin PBF: ${window.orderPayload?.no_izin_pbf || '-'}\n- APJ: ${window.orderPayload?.apj || '-'}\n- No. SIKA: ${window.orderPayload?.sika || '-'}\n- Alamat: ${window.orderPayload?.address || '-'}\n- Nomor Tlp: ${window.orderPayload?.phone || '-'}\n`;
   } else {
     msg += `- Nama: ${window.orderPayload?.buyer_name}\n- HP/WA: ${window.orderPayload?.phone}\n- Alamat: ${window.orderPayload?.address}\n`;
   }

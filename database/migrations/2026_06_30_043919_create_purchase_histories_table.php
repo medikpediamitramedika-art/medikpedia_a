@@ -24,6 +24,9 @@ return new class extends Migration {
             $table->string("kota")->nullable();
             $table->string("sia")->nullable();
             $table->string("sipa")->nullable();
+            $table->string("no_izin_pbf")->nullable();
+            $table->string("apj")->nullable();
+            $table->string("sika")->nullable();
             $table->json("items")->nullable();
             $table->unsignedInteger("total")->default(0);
             $table->timestamps();

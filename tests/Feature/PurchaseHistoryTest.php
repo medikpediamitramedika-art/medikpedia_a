@@ -34,4 +34,29 @@ class PurchaseHistoryTest extends TestCase
             'total' => 30000,
         ]);
     }
+
+    public function test_purchase_history_can_store_pbf_buyer_type(): void
+    {
+        $response = $this->postJson('/orders/history', [
+            'buyer_type' => 'pbf',
+            'buyer_name' => 'PT Contoh PBF',
+            'phone' => '081234567891',
+            'address' => 'Jl. PBF No. 10',
+            'kecamatan' => 'Ilir Timur II',
+            'kota' => 'Palembang',
+            'sia' => 'SIA-PBF-001',
+            'sipa' => 'SIPA-PBF-001',
+            'items' => [
+                ['name' => 'Paracetamol', 'qty' => 1, 'price' => 10000],
+            ],
+            'total' => 10000,
+        ]);
+
+        $response->assertOk();
+        $this->assertDatabaseHas('purchase_histories', [
+            'buyer_name' => 'PT Contoh PBF',
+            'buyer_type' => 'pbf',
+            'total' => 10000,
+        ]);
+    }
 }

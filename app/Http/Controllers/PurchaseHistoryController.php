@@ -10,7 +10,7 @@ class PurchaseHistoryController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'buyer_type'      => ['required', 'string', 'in:umum,apotik'],
+            'buyer_type'      => ['required', 'string', 'in:umum,apotik,pbf'],
             'buyer_name'      => ['required', 'string', 'max:255'],
             'phone'           => ['nullable', 'string', 'max:255'],
             'address'         => ['nullable', 'string'],
@@ -18,6 +18,8 @@ class PurchaseHistoryController extends Controller
             'kota'            => ['nullable', 'string', 'max:255'],
             'sia'             => ['nullable', 'string', 'max:255'],
             'sipa'            => ['nullable', 'string', 'max:255'],
+            'no_izin_pbf'     => ['nullable', 'string', 'max:255'],
+            'apj'             => ['nullable', 'string', 'max:255'],
             'items'           => ['nullable', 'array'],
             'total'           => ['required', 'integer', 'min:0'],
             'original_total'  => ['nullable', 'integer', 'min:0'],
