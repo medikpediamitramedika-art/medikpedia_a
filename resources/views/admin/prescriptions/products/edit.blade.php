@@ -113,6 +113,9 @@
 <form action="{{ route('admin.prescription-products.update', $medicine->id) }}" method="POST" enctype="multipart/form-data">
     @csrf
     @method('PUT')
+    <input type="hidden" name="search" value="{{ request('search') }}">
+    <input type="hidden" name="kategori" value="{{ request('kategori') }}">
+    <input type="hidden" name="page" value="{{ request('page') }}">
     <div class="two-col-layout">
 
         <div class="form-card">
@@ -224,7 +227,7 @@
                 <button type="submit" class="btn-save">
                     <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan
                 </button>
-                <a href="{{ route('admin.prescription-products.index') }}" class="btn-cancel">
+                <a href="{{ route('admin.prescription-products.index', array_filter(['search' => request('search'), 'kategori' => request('kategori'), 'page' => request('page')])) }}" class="btn-cancel">
                     <i class="fa-solid fa-xmark"></i> Batal
                 </a>
             </div>

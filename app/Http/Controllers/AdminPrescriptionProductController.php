@@ -135,12 +135,14 @@ class AdminPrescriptionProductController extends Controller
 
         $product->update($validated);
 
-        return redirect()->route('admin.prescriptions.products.index')
+        $queryParams = $this->buildIndexQueryParams($request);
+
+        return redirect()->route('admin.prescriptions.products.index', $queryParams)
                        ->with('success', 'Produk resep berhasil diupdate!');
     }
 
     // Hapus produk resep
-    public function destroy(Medicine $product)
+    public function destroy(Request $request, Medicine $product)
     {
         if (!$product->is_resep) {
             abort(404);
@@ -149,8 +151,24 @@ class AdminPrescriptionProductController extends Controller
         ImageHelper::deleteProductImage($product->gambar);
         $product->delete();
 
-        return redirect()->route('admin.prescriptions.products.index')
+        $queryParams = $this->buildIndexQueryParams($request);
+
+        return redirect()->route('admin.prescriptions.products.index', $queryParams)
                        ->with('success', 'Produk resep berhasil dihapus!');
+    }
+
+    private function buildIndexQueryParams(Request $request): array
+    {
+        $params = [];
+
+        foreach (['search', 'kategori', 'page'] as $field) {
+            $value = $request->query($field, $request->input($field));
+            if ($value !== null && $value !== '') {
+                $params[$field] = $value;
+            }
+        }
+
+        return $params;
     }
 
     // Update stok produk resep

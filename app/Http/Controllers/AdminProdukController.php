@@ -131,17 +131,35 @@ class AdminProdukController extends Controller
 
         $produk->update($validated);
 
-        return redirect()->route('admin.produk.index')
+        $queryParams = $this->buildIndexQueryParams($request);
+
+        return redirect()->route('admin.produk.index', $queryParams)
                          ->with('success', 'Produk berhasil diupdate!');
     }
 
-    public function destroy(Medicine $produk)
+    public function destroy(Request $request, Medicine $produk)
     {
         ImageHelper::deleteProductImage($produk->gambar);
         $produk->delete();
 
-        return redirect()->route('admin.produk.index')
+        $queryParams = $this->buildIndexQueryParams($request);
+
+        return redirect()->route('admin.produk.index', $queryParams)
                          ->with('success', 'Produk berhasil dihapus!');
+    }
+
+    private function buildIndexQueryParams(Request $request): array
+    {
+        $params = [];
+
+        foreach (['search', 'kategori_produk', 'pabrik', 'page'] as $field) {
+            $value = $request->query($field, $request->input($field));
+            if ($value !== null && $value !== '') {
+                $params[$field] = $value;
+            }
+        }
+
+        return $params;
     }
 
     public function updateStock(Request $request, Medicine $produk)

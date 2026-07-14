@@ -144,21 +144,39 @@ class AdminMedicineController extends Controller
 
         $medicine->update($validated);
 
-        return redirect()->route('admin.medicines.index')
+        $queryParams = $this->buildIndexQueryParams($request);
+
+        return redirect()->route('admin.medicines.index', $queryParams)
                        ->with('success', 'Obat berhasil diupdate!');
     }
 
     // Hapus obat
-    public function destroy(Medicine $medicine)
+    public function destroy(Request $request, Medicine $medicine)
     {
         ImageHelper::deleteProductImage($medicine->gambar);
         $medicine->delete();
 
-        return redirect()->route('admin.medicines.index')
+        $queryParams = $this->buildIndexQueryParams($request);
+
+        return redirect()->route('admin.medicines.index', $queryParams)
                        ->with('success', 'Obat berhasil dihapus!');
     }
 
     // Update stok
+    private function buildIndexQueryParams(Request $request): array
+    {
+        $params = [];
+
+        foreach (['search', 'kategori', 'tipe', 'page'] as $field) {
+            $value = $request->query($field, $request->input($field));
+            if ($value !== null && $value !== '') {
+                $params[$field] = $value;
+            }
+        }
+
+        return $params;
+    }
+
     public function updateStock(Request $request, Medicine $medicine)
     {
         $validated = $request->validate([

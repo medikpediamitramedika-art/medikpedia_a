@@ -126,19 +126,37 @@ class AdminPrescriptionController extends Controller
 
         $prescription->update($validated);
 
-        return redirect()->route('admin.grosir.index')
+        $queryParams = $this->buildIndexQueryParams($request);
+
+        return redirect()->route('admin.prescriptions.index', $queryParams)
             ->with('success', 'Produk resep berhasil diupdate!');
     }
 
     // DELETE
-    public function destroy(Medicine $prescription)
+    public function destroy(Request $request, Medicine $prescription)
     {
         if (!$prescription->is_resep) abort(404);
         ImageHelper::deleteProductImage($prescription->gambar);
         $prescription->delete();
 
-        return redirect()->route('admin.grosir.index')
+        $queryParams = $this->buildIndexQueryParams($request);
+
+        return redirect()->route('admin.prescriptions.index', $queryParams)
             ->with('success', 'Produk resep berhasil dihapus!');
+    }
+
+    private function buildIndexQueryParams(Request $request): array
+    {
+        $params = [];
+
+        foreach (['search', 'kategori', 'page'] as $field) {
+            $value = $request->query($field, $request->input($field));
+            if ($value !== null && $value !== '') {
+                $params[$field] = $value;
+            }
+        }
+
+        return $params;
     }
 
     // UPDATE STOK

@@ -248,7 +248,7 @@
                     <td style="font-size:0.82rem;color:#9ca3af;">{{ $medicine->created_at->format('d M Y') }}</td>
                     <td>
                         <div class="action-wrap">
-                            <a href="{{ route('admin.produk.edit', $medicine->id) }}" class="btn-edit">
+                            <a href="{{ route('admin.produk.edit', ['produk' => $medicine->id, 'search' => $search, 'kategori_produk' => $kategori_produk, 'pabrik' => $pabrik, 'page' => request('page')]) }}" class="btn-edit">
                                 <i class="fa-solid fa-pen"></i> Edit
                             </a>
                             <button type="button" class="btn-del"

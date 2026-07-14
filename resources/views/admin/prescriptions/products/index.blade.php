@@ -309,13 +309,16 @@
                     </td>
                     <td>
                         <div class="action-wrap">
-                            <a href="{{ route('admin.prescription-products.edit', $medicine->id) }}" class="btn-edit">
+                            <a href="{{ route('admin.prescription-products.edit', ['product' => $medicine->id, 'search' => $search, 'kategori' => $kategori, 'page' => request('page')]) }}" class="btn-edit">
                                 <i class="fa-solid fa-pen"></i> Edit
                             </a>
-                            <form action="{{ route('admin.prescription-products.destroy', $medicine->id) }}" method="POST"
+                            <form action="{{ route('admin.prescription-products.destroy', ['product' => $medicine->id, 'search' => $search, 'kategori' => $kategori, 'page' => request('page')]) }}" method="POST"
                                   onsubmit="return confirm('Hapus produk resep ini?');">
                                 @csrf
                                 @method('DELETE')
+                                <input type="hidden" name="search" value="{{ $search }}">
+                                <input type="hidden" name="kategori" value="{{ $kategori }}">
+                                <input type="hidden" name="page" value="{{ request('page') }}">
                                 <button type="submit" class="btn-del">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>

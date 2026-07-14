@@ -234,6 +234,10 @@
 <form action="{{ route('admin.medicines.update', $medicine->id) }}" method="POST" enctype="multipart/form-data">
     @csrf
     @method('PUT')
+    <input type="hidden" name="search" value="{{ request('search') }}">
+    <input type="hidden" name="kategori" value="{{ request('kategori') }}">
+    <input type="hidden" name="tipe" value="{{ request('tipe') }}">
+    <input type="hidden" name="page" value="{{ request('page') }}">
     <div class="two-col-layout">
 
         {{-- Left: Main Info --}}
@@ -379,7 +383,7 @@
                 <button type="submit" class="btn-save">
                     <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan
                 </button>
-                <a href="{{ route('admin.medicines.index') }}" class="btn-cancel">
+                <a href="{{ route('admin.medicines.index', array_filter(['search' => request('search'), 'kategori' => request('kategori'), 'tipe' => request('tipe'), 'page' => request('page')])) }}" class="btn-cancel">
                     <i class="fa-solid fa-xmark"></i> Batal
                 </a>
             </div>
