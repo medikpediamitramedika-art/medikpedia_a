@@ -53,44 +53,46 @@
         margin-bottom: 0.5rem; position: relative;
     }
     .products-header p { color: rgba(255,255,255,0.8); font-size: 1rem; position: relative; }
-    .breadcrumb-custom { display: flex; gap: 0.5rem; align-items: center; margin-bottom: 1rem; position: relative; }
-    .breadcrumb-custom a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.9rem; }
-    .breadcrumb-custom a:hover { color: #ffdd99; }
-    .breadcrumb-custom span { color: rgba(255,255,255,0.6); font-size: 0.9rem; }
-    .breadcrumb-custom .current { color: #ffd79b; font-size: 0.9rem; font-weight: 600; }
+    .breadcrumb-custom { display: flex; gap: 0.4rem; align-items: center; margin-bottom: 0.9rem; position: relative; font-size: 0.88rem; }
+    .breadcrumb-custom a { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 0.88rem; transition: color 0.2s; font-weight: 500; }
+    .breadcrumb-custom a:hover { color: #ffffff; }
+    .breadcrumb-custom span { color: rgba(255,255,255,0.55); font-size: 0.88rem; }
+    .breadcrumb-custom .current { color: #ffd79b; font-size: 0.88rem; font-weight: 600; }
     .products-header .hero-panel {
         display: grid;
         grid-template-columns: auto 1fr;
-        gap: 1.75rem;
-        align-items: center;
+        gap: 3rem;
+        align-items: flex-start;
         position: relative;
         z-index: 2;
         background: rgba(255,255,255,0.08);
         border: 1px solid rgba(255,255,255,0.22);
         border-radius: 32px;
-        padding: 2rem 2rem 1.8rem;
+        padding: 3rem;
         box-shadow: 0 35px 70px rgba(0,0,0,0.18);
         backdrop-filter: blur(16px);
     }
     .products-header .brand-logo {
-        max-height: 170px;
+        max-height: 150px;
         width: auto;
         display: block;
-        border-radius: 28px;
-        padding: 1rem;
-        background: rgba(255,255,255,0.95);
-        box-shadow: 0 24px 48px rgba(0,0,0,0.18);
+        border-radius: 24px;
+        padding: 0.75rem;
+        background: rgba(255,255,255,0.96);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        flex-shrink: 0;
+        margin-top: 0.5rem;
     }
     .products-header .brand-copy {
-        max-width: 760px;
+        max-width: 100%;
     }
-    .products-header .brand-copy h1 { margin-bottom: 0.85rem; line-height: 1.02; letter-spacing: -0.03em; }
-    .products-header .brand-copy p { margin: 0; color: rgba(255,255,255,0.94); font-size: 1.02rem; line-height: 1.8; }
-    .products-header .brand-copy .brand-address { margin-top: 1.2rem; font-size: 0.96rem; color: rgba(255,255,255,0.8); line-height: 1.8; max-width: 720px; }
-    .products-header .partner-logos { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-top: 1.4rem; }
-    .products-header .partner-logo-desktop { display: block; max-height: 160px; width: auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.16)); }
-    .products-header .partner-card { display: none; width: 100%; max-width: 280px; background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.22); border-radius: 26px; padding: 1.2rem; align-items: center; justify-content: center; box-shadow: 0 18px 40px rgba(0,0,0,0.14); }
-    .products-header .partner-card img { max-height: 140px; width: auto; display: block; filter: drop-shadow(0 14px 32px rgba(0,0,0,0.18)); }
+    .products-header .brand-copy h1 { margin-bottom: 0.6rem; line-height: 1.08; letter-spacing: -0.02em; font-size: 2.5rem; font-weight: 800; color: #ffffff; }
+    .products-header .brand-copy p { margin: 0 0 0.75rem; color: rgba(255,255,255,0.96); font-size: 1.08rem; line-height: 1.65; font-weight: 400; }
+    .products-header .brand-copy .brand-address { margin-top: 0.75rem; margin-bottom: 0.5rem; font-size: 0.93rem; color: rgba(255,255,255,0.85); line-height: 1.55; max-width: 100%; font-weight: 400; }
+    .products-header .partner-logos { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; margin-top: -0.8rem; justify-content: flex-start; width: 100%; }
+    .products-header .partner-logo-desktop { display: block; max-height: 380px; max-width: 120%; width: auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.16)); }
+    .products-header .partner-card { display: none; width: 110%; max-width: 280px; background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.22); border-radius: 26px; padding: 0.6rem; align-items: center; justify-content: center; box-shadow: 0 18px 40px rgba(0,0,0,0.14); }
+    .products-header .partner-card img { max-height: 80px; width: 30%; display: block; filter: drop-shadow(0 14px 32px rgba(0,0,0,0.18)); }
     .products-main { background: transparent; padding: 2.5rem 0 5rem; min-height: 60vh; }
 
     .filter-bar {
@@ -338,22 +340,38 @@
         .products-header .hero-panel {
             grid-template-columns: 1fr;
             text-align: center;
+            gap: 1.5rem;
+            padding: 2rem;
         }
         .products-header .brand-logo {
             margin: 0 auto;
-            max-height: 120px;
+            max-height: 130px;
             width: auto;
+        }
+        .products-header .brand-copy h1 {
+            font-size: 2rem;
+            line-height: 1.1;
+            margin-bottom: 0.5rem;
+        }
+        .products-header .brand-copy p {
+            font-size: 1rem;
+            line-height: 1.6;
         }
         .products-header .brand-copy {
             max-width: none;
         }
         .products-header .partner-logos {
             justify-content: center;
+            margin-top: 1.2rem;
         }
         .products-header .partner-card {
             display: flex;
             margin: 0 auto;
             max-width: 280px;
+        }
+        .products-header .partner-card img {
+            max-height: 170px;
+            width: auto;
         }
         .products-header .partner-logo-desktop {
             display: none;
@@ -557,7 +575,7 @@
                                 Lihat Detail <i class="fa-solid fa-arrow-right"></i>
                             </a>
                             @if($medicine->stok > 0)
-                            <button class="btn-cart" onclick="addToCart({{ $medicine->id }}, '{{ addslashes($medicine->nama_obat) }}', {{ $medicine->harga }}, '{{ $medicine->gambar ? url('storage/'.$medicine->gambar) : '' }}', this)">
+                            <button class="btn-cart" onclick="addToCart({{ $medicine->id }}, '{{ addslashes($medicine->nama_obat) }}', {{ $medicine->harga }}, '{{ $medicine->gambar ? url('storage/'.$medicine->gambar) : '' }}', '{{ addslashes($medicine->brand ?: $medicine->kategori) }}', this)">
                                 <i class="fa-solid fa-cart-plus"></i> Tambah ke Keranjang
                             </button>
                             @endif

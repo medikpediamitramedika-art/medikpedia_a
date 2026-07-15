@@ -693,7 +693,7 @@
                                 @endif
                                 <div class="product-actions">
                                     <a href="{{ route('medicines.show', $med->id) }}" class="btn-detail">Lihat Detail</a>
-                                    <button class="btn-add-cart" onclick="addToCart({{ $med->id }}, '{{ addslashes($med->nama_obat) }}', {{ $med->harga }})">
+                                    <button class="btn-add-cart" onclick="addToCart({{ $med->id }}, '{{ addslashes($med->nama_obat) }}', {{ $med->harga }}, '', '{{ addslashes($med->brand ?: $med->kategori) }}')">
                                         <i class="fa-solid fa-cart-plus"></i> Keranjang
                                     </button>
                                 </div>

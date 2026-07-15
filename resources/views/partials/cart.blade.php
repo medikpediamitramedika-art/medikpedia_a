@@ -153,8 +153,8 @@
       <input id="f_no_izin_pbf" type="text" class="form-inp" placeholder="No. Izin PBF">
       <label class="form-lbl">APJ <span style="color:#ef4444;">*</span></label>
       <input id="f_apj" type="text" class="form-inp" placeholder="APJ">
-      <label class="form-lbl">No. SIKA <span style="color:#ef4444;">*</span></label>
-      <input id="f_sika" type="text" class="form-inp" placeholder="No. SIKA">
+      <label class="form-lbl">No. NPWP <span style="color:#ef4444;">*</span></label>
+      <input id="f_npwp" type="text" class="form-inp" placeholder="No. NPWP">
       <label class="form-lbl">Alamat <span style="color:#ef4444;">*</span></label>
       <textarea id="f_alamat_pbf" rows="3" class="form-inp" style="resize:vertical;" placeholder="Alamat lengkap"></textarea>
       <label class="form-lbl">Nomor Tlp <span style="color:#ef4444;">*</span></label>
@@ -224,9 +224,11 @@ function syncBadge() {
 
 function rp(n) { return 'Rp ' + Number(n).toLocaleString('id-ID'); }
 
-function addToCart(id, name, price, img, btn) {
+function addToCart(id, name, price, img, brand, btn) {
   const ex = cart.find(i => i.id === id);
-  if (ex) ex.qty++; else cart.push({ id, name, price, img, qty: 1, note: '' });
+  console.log('addToCart:', { id, name, brand, img });
+  if (ex) { ex.qty++; ex.brand = brand; } else cart.push({ id, name, price, img, brand: brand || '', qty: 1, note: '', discount: 0 });
+  console.log('Cart item:', cart.find(i => i.id === id));
   save(); render();
   if (btn) {
     btn.classList.add('added');
@@ -502,7 +504,7 @@ function buildReceiptPdf(orderData) {
   if (orderData.buyer_name) writeMeta(orderData.buyer_type === 'pbf' ? 'Nama Pemesan' : 'Pembeli', orderData.buyer_name);
   if (orderData.no_izin_pbf) writeMeta('No. Izin PBF', orderData.no_izin_pbf);
   if (orderData.apj) writeMeta('APJ', orderData.apj);
-  if (orderData.sika) writeMeta('No. SIKA', orderData.sika);
+  if (orderData.npwp) writeMeta('No. NPWP', orderData.npwp);
   if (orderData.phone) writeMeta(orderData.buyer_type === 'pbf' ? 'Nomor Tlp' : 'No. HP', orderData.phone);
   if (orderData.address) {
     const addressParts = [orderData.address];
@@ -518,10 +520,14 @@ function buildReceiptPdf(orderData) {
   startProductSection();
 
   let total = 0;
-  cart.forEach(it => {
+  const cartItems = orderData.cartItems || cart;
+  cartItems.forEach(it => {
     const subtotal = it.price * it.qty;
-    total += subtotal;
+    const afterDiscount = subtotal - (it.discount || 0);
+    total += afterDiscount;
     const nameWrapWidth = qtyX - leftMargin - 12;
+    
+    // Tampilkan nama produk
     const nameLines = doc.splitTextToSize(it.name, nameWrapWidth);
     nameLines.forEach((ln, idx) => {
       ensureSpace(18);
@@ -530,11 +536,32 @@ function buildReceiptPdf(orderData) {
       if (idx === 0) {
         doc.text(String(it.qty), qtyX, y, { align: 'right' });
         doc.text(`x ${rp(it.price)}`, unitPriceX, y, { align: 'right' });
-        doc.text(rp(subtotal), subtotalX, y, { align: 'right' });
+        doc.text(rp(afterDiscount), subtotalX, y, { align: 'right' });
       }
       y += 18;
     });
-    y += 6;
+    
+    // Tampilkan Pabrik/Brand di baris berikutnya
+    if (it.brand && String(it.brand).trim() !== '') {
+      ensureSpace(12);
+      doc.setFontSize(8);
+      doc.setTextColor(100, 116, 139);
+      doc.text(`Pabrik: ${it.brand}`, leftMargin + 8, y);
+      doc.setTextColor(0, 0, 0);
+      y += 11;
+    }
+    
+    // Tampilkan Potongan Harga jika ada
+    if (it.discount && it.discount > 0) {
+      ensureSpace(12);
+      doc.setFontSize(8);
+      doc.setTextColor(239, 68, 68);
+      doc.text(`Potongan: -${rp(it.discount)}`, leftMargin + 8, y);
+      doc.setTextColor(0, 0, 0);
+      y += 11;
+    }
+    
+    y += 4;
   });
 
   ensureSpace(80);
@@ -589,8 +616,8 @@ async function submitOrder() {
     payload.address  = document.getElementById('f_alamat_pbf').value.trim();
     payload.no_izin_pbf = document.getElementById('f_no_izin_pbf').value.trim();
     payload.apj      = document.getElementById('f_apj').value.trim();
-    payload.sika     = document.getElementById('f_sika').value.trim();
-    if (!payload.buyer_name || !payload.phone || !payload.address || !payload.no_izin_pbf || !payload.apj || !payload.sika) {
+    payload.npwp     = document.getElementById('f_npwp').value.trim();
+    if (!payload.buyer_name || !payload.phone || !payload.address || !payload.no_izin_pbf || !payload.apj || !payload.npwp) {
       err.textContent = 'Semua field PBF wajib diisi.'; err.style.display = 'block'; return;
     }
   } else {
@@ -616,7 +643,7 @@ async function submitOrder() {
     });
     if (!response.ok) { const e = await response.json(); throw (e.errors || new Error('Gagal menyimpan pesanan.')); }
     const result = await response.json();
-    window.orderPayload = { ...payload, id: result.id };
+    window.orderPayload = { ...payload, id: result.id, cartItems: cart };
     document.getElementById('orderFormPanel').style.display = 'none';
     document.getElementById('nextActionPanel').style.display = 'block';
   } catch (error) {

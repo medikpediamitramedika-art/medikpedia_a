@@ -968,7 +968,7 @@
             @endif
             <a href="{{ route('medicines.show', $med->id) }}" class="btn-detail">Lihat Detail <i class="fa-solid fa-arrow-right"></i></a>
             @if($med->stok > 0)
-            <button class="btn-cart" onclick="addToCart({{ $med->id }},'{{ addslashes($med->nama_obat) }}',{{ $med->harga }},'{{ $med->gambar ? url('storage/'.$med->gambar) : '' }}',this)">
+            <button class="btn-cart" onclick="addToCart({{ $med->id }},'{{ addslashes($med->nama_obat) }}',{{ $med->harga }},'{{ $med->gambar ? url('storage/'.$med->gambar) : '' }}','{{ addslashes($med->brand ?: $med->kategori) }}',this)">
               <i class="fa-solid fa-cart-plus"></i> Keranjang
             </button>
             @endif
@@ -1629,7 +1629,7 @@
               <div class="prod-actions">
                 <a href="{{ route('medicines.show', $med->id) }}" class="btn-detail">Lihat Detail <i class="fa-solid fa-arrow-right"></i></a>
                 @if($med->stok > 0)
-                  <button class="btn-cart" onclick="addToCart({{ $med->id }},'{{ addslashes($med->nama_obat) }}',{{ $med->harga }},'{{ $med->gambar ? url('storage/'.$med->gambar) : '' }}',this)">
+                  <button class="btn-cart" onclick="addToCart({{ $med->id }},'{{ addslashes($med->nama_obat) }}',{{ $med->harga }},'{{ $med->gambar ? url('storage/'.$med->gambar) : '' }}','{{ addslashes($med->brand ?: $med->kategori) }}',this)">
                     <i class="fa-solid fa-cart-plus"></i> Keranjang
                   </button>
                 @endif
