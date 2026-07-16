@@ -148,6 +148,35 @@ class AdminProdukController extends Controller
                          ->with('success', 'Produk berhasil dihapus!');
     }
 
+    public function destroyMany(Request $request)
+    {
+        $selectedIds = $request->input('produk_ids', []);
+
+        if (empty($selectedIds) || !is_array($selectedIds)) {
+            return redirect()->route('admin.produk.index', $this->buildIndexQueryParams($request))
+                             ->with('error', 'Pilih minimal satu produk untuk dihapus.');
+        }
+
+        $selectedIds = array_filter(array_map('intval', $selectedIds));
+
+        if (empty($selectedIds)) {
+            return redirect()->route('admin.produk.index', $this->buildIndexQueryParams($request))
+                             ->with('error', 'Pilih minimal satu produk untuk dihapus.');
+        }
+
+        $products = Medicine::whereIn('id', $selectedIds)->get();
+
+        foreach ($products as $produk) {
+            ImageHelper::deleteProductImage($produk->gambar);
+            $produk->delete();
+        }
+
+        $queryParams = $this->buildIndexQueryParams($request);
+
+        return redirect()->route('admin.produk.index', $queryParams)
+                         ->with('success', 'Sebanyak ' . count($products) . ' produk berhasil dihapus!');
+    }
+
     private function buildIndexQueryParams(Request $request): array
     {
         $params = [];

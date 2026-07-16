@@ -65,6 +65,13 @@
 
     .action-wrap { display:flex; gap:0.4rem; }
     .btn-edit, .btn-del { display:inline-flex; align-items:center; gap:0.3rem; padding:0.35rem 0.75rem; border-radius:0.4rem; font-size:0.78rem; font-weight:600; text-decoration:none; border:none; cursor:pointer; transition:all 0.2s; }
+    .bulk-actions { display:flex; justify-content:space-between; align-items:center; padding:0.9rem 1.1rem; background:#f8faff; border-bottom:1px solid #e5e7eb; gap:0.75rem; flex-wrap:wrap; }
+    .bulk-actions-left { display:flex; align-items:center; gap:0.6rem; font-size:0.85rem; font-weight:600; color:#374151; }
+    .bulk-actions-left input[type="checkbox"] { width:16px; height:16px; accent-color:#1E88E5; }
+    .bulk-btn { display:inline-flex; align-items:center; gap:0.4rem; padding:0.5rem 0.95rem; border-radius:0.45rem; font-size:0.8rem; font-weight:700; border:none; cursor:pointer; }
+    .bulk-btn:disabled { opacity:0.55; cursor:not-allowed; }
+    .bulk-btn-danger { background:#fee2e2; color:#991b1b; }
+    .bulk-btn-danger:hover:not(:disabled) { background:#ef4444; color:white; }
     .btn-edit { background:#e3f2fd; color:#1565C0; }
     .btn-edit:hover { background:#1E88E5; color:white; }
     .btn-del  { background:#fee2e2; color:#991b1b; }
@@ -178,9 +185,29 @@
 
 @if($medicines->count() > 0)
     <div class="data-table-wrap">
-        <table class="data-table">
+        <form id="bulkDeleteForm" method="POST" action="{{ route('admin.produk.destroyMany') }}">
+            @csrf
+            @method('DELETE')
+            <input type="hidden" name="search" value="{{ $search }}">
+            <input type="hidden" name="kategori_produk" value="{{ $kategori_produk }}">
+            <input type="hidden" name="pabrik" value="{{ $pabrik }}">
+            <input type="hidden" name="page" value="{{ request('page', 1) }}">
+
+            <div class="bulk-actions">
+                <label class="bulk-actions-left">
+                    <input type="checkbox" id="selectAllProducts">
+                    Pilih semua produk di halaman ini
+                </label>
+                <button type="submit" class="bulk-btn bulk-btn-danger" id="bulkDeleteBtn" disabled
+                        onclick="return confirm('Yakin ingin menghapus produk terpilih?');">
+                    <i class="fa-solid fa-trash"></i> Hapus Terpilih <span id="bulkDeleteCount">(0)</span>
+                </button>
+            </div>
+
+            <table class="data-table">
             <thead>
                 <tr>
+                    <th style="width:48px;">☑</th>
                     <th style="width:140px;">Foto</th>
                     <th>Nama Produk</th>
                     <th>Sediaan</th>
@@ -196,6 +223,9 @@
             <tbody>
                 @foreach($medicines as $medicine)
                 <tr>
+                    <td style="text-align:center;">
+                        <input type="checkbox" class="product-checkbox" name="produk_ids[]" value="{{ $medicine->id }}">
+                    </td>
                     <td style="vertical-align:top;">
                         @if($medicine->gambar)
                             <img src="{{ url('storage/' . $medicine->gambar) }}" alt="{{ $medicine->nama_obat }}" class="med-img">
@@ -260,7 +290,8 @@
                 </tr>
                 @endforeach
             </tbody>
-        </table>
+            </table>
+        </form>
 
         <div class="pagination-wrap">
             <div class="pagination-info">
@@ -329,6 +360,10 @@
 <form id="deleteForm" method="POST" style="display:none;">
     @csrf
     @method('DELETE')
+    <input type="hidden" name="search" value="{{ $search }}">
+    <input type="hidden" name="kategori_produk" value="{{ $kategori_produk }}">
+    <input type="hidden" name="pabrik" value="{{ $pabrik }}">
+    <input type="hidden" name="page" value="{{ request('page', 1) }}">
 </form>
 
 <script>
@@ -352,6 +387,89 @@ function closeDeleteModal() {
 function submitDelete() {
     document.getElementById('deleteForm').submit();
 }
+
+const selectionStorageKey = 'admin_produk_selected_ids';
+
+function getStoredSelectedIds() {
+    try {
+        const stored = localStorage.getItem(selectionStorageKey);
+        if (!stored) return [];
+        return JSON.parse(stored).filter(function (id) {
+            return Number.isInteger(id);
+        });
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveStoredSelectedIds(ids) {
+    const uniqueIds = [...new Set(ids.map(function (id) { return Number(id); }))];
+    localStorage.setItem(selectionStorageKey, JSON.stringify(uniqueIds));
+}
+
+function updateBulkDeleteState() {
+    const selectedIds = getStoredSelectedIds();
+    const checkedBoxes = document.querySelectorAll('.product-checkbox:checked');
+    const bulkBtn = document.getElementById('bulkDeleteBtn');
+    const bulkCount = document.getElementById('bulkDeleteCount');
+    const selectAll = document.getElementById('selectAllProducts');
+
+    if (bulkBtn) {
+        bulkBtn.disabled = selectedIds.length === 0;
+    }
+
+    if (bulkCount) {
+        bulkCount.textContent = '(' + selectedIds.length + ')';
+    }
+
+    if (selectAll) {
+        const totalCheckboxes = document.querySelectorAll('.product-checkbox');
+        selectAll.checked = totalCheckboxes.length > 0 && Array.from(totalCheckboxes).every(function (checkbox) {
+            return selectedIds.includes(Number(checkbox.value));
+        });
+    }
+}
+
+function syncSelectionsFromStorage() {
+    const selectedIds = getStoredSelectedIds();
+    document.querySelectorAll('.product-checkbox').forEach(function (checkbox) {
+        checkbox.checked = selectedIds.includes(Number(checkbox.value));
+    });
+    updateBulkDeleteState();
+}
+
+if (document.getElementById('selectAllProducts')) {
+    document.getElementById('selectAllProducts').addEventListener('change', function () {
+        document.querySelectorAll('.product-checkbox').forEach(function (checkbox) {
+            checkbox.checked = this.checked;
+        }, this);
+
+        const selectedIds = Array.from(document.querySelectorAll('.product-checkbox:checked')).map(function (checkbox) {
+            return Number(checkbox.value);
+        });
+        saveStoredSelectedIds(selectedIds);
+        updateBulkDeleteState();
+    });
+}
+
+document.querySelectorAll('.product-checkbox').forEach(function (checkbox) {
+    checkbox.addEventListener('change', function () {
+        const selectedIds = Array.from(document.querySelectorAll('.product-checkbox:checked')).map(function (item) {
+            return Number(item.value);
+        });
+        saveStoredSelectedIds(selectedIds);
+        updateBulkDeleteState();
+    });
+});
+
+const bulkDeleteForm = document.getElementById('bulkDeleteForm');
+if (bulkDeleteForm) {
+    bulkDeleteForm.addEventListener('submit', function () {
+        localStorage.removeItem(selectionStorageKey);
+    });
+}
+
+syncSelectionsFromStorage();
 
 // Tutup modal jika klik overlay
 document.getElementById('deleteModal').addEventListener('click', function(e) {

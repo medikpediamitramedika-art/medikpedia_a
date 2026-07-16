@@ -93,6 +93,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('prescription-products-import/template', [AdminPrescriptionProductImportController::class, 'downloadTemplate'])->name('prescription-products.import.template');
 
     // Produk management
+    Route::delete('produk/bulk-delete', [AdminProdukController::class, 'destroyMany'])->name('produk.destroyMany');
     Route::resource('produk', AdminProdukController::class);
     Route::post('produk/{produk}/update-stock', [AdminProdukController::class, 'updateStock'])->name('produk.update-stock');
     Route::get('produk-import', [AdminProdukImportController::class, 'showImportForm'])->name('produk.import');
