@@ -403,7 +403,10 @@
                     </div>
                 </div>
 
-                
+                @if(!empty($medicine->sediaan))
+                    <div style="margin-bottom:0.85rem;"><strong>Sediaan:</strong> <span style="color:#374151;">{{ $medicine->sediaan_label }}</span></div>
+                @endif
+
                 @if(!empty($medicine->komposisi))
                     <div style="margin-bottom:0.85rem;"><strong>Komposisi:</strong> <span style="color:#374151;">{!! nl2br(e($medicine->komposisi)) !!}</span></div>
                 @endif

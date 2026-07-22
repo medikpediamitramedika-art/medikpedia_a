@@ -959,6 +959,11 @@
             @if($med->kategori)<span class="prod-brand-tag">{{ $med->kategori }}</span>@endif
             <h3 class="prod-name">{{ $med->nama_obat }}</h3>
             <div class="prod-price">{{ $med->getFormattedPrice() }}</div>
+            @if($med->sediaan_label)
+              <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.35rem;display:flex;align-items:center;gap:0.35rem;">
+                <i class="fa-solid fa-cube"></i> <span>{{ $med->sediaan_label }}</span>
+              </div>
+            @endif
             @if($med->stok > 10)
               <span class="stock-ok"><i class="fa-solid fa-circle-check"></i> Stok Tersedia</span>
             @elseif($med->stok > 0)
@@ -1621,6 +1626,11 @@
               @endif
               <h3 class="prod-name">{{ $med->nama_obat }}</h3>
               <div class="prod-price">{{ $med->getFormattedPrice() }}</div>
+              @if($med->sediaan_label)
+                <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.35rem;display:flex;align-items:center;gap:0.35rem;">
+                  <i class="fa-solid fa-cube"></i> <span>{{ $med->sediaan_label }}</span>
+                </div>
+              @endif
               @if($med->stok > 0)
                 <div class="prod-stock">Stok: {{ $med->stok }}</div>
               @else

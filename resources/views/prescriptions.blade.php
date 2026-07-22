@@ -333,6 +333,11 @@
                             <h3 class="medicine-name">{{ $medicine->nama_obat }}</h3>
                             
                             <div class="medicine-price">{{ $medicine->getFormattedPrice() }}</div>
+                            @if($medicine->sediaan_label)
+                                <div class="medicine-meta" style="display:flex;align-items:center;gap:0.35rem;margin-bottom:0.6rem;">
+                                    <i class="fa-solid fa-cube"></i> <span>Sediaan: {{ $medicine->sediaan_label }}</span>
+                                </div>
+                            @endif
                             @if($medicine->stok > 10)
                                 <span class="stock-badge stock-available"><i class="fa-solid fa-circle-check"></i> {{ $medicine->stok }} tersedia</span>
                             @elseif($medicine->stok > 0)

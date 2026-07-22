@@ -684,6 +684,11 @@
                                 <h3 class="product-name">{{ $med->nama_obat }}</h3>
                                 
                                 <div class="product-price">{{ $med->getFormattedPrice() }}</div>
+                                @if($med->sediaan_label)
+                                    <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.35rem;display:flex;align-items:center;gap:0.35rem;">
+                                      <i class="fa-solid fa-cube"></i> <span>{{ $med->sediaan_label }}</span>
+                                    </div>
+                                @endif
                                 @if($med->stok > 10)
                                     <span class="product-stock stock-ok"><i class="fa-solid fa-check-circle"></i> Tersedia</span>
                                 @elseif($med->stok > 0)

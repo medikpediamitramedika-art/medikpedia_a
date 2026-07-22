@@ -64,6 +64,35 @@ class Medicine extends Model
         return $this->stok > 0;
     }
 
+    public function getSediaanLabelAttribute(): string
+    {
+        if (empty($this->sediaan)) {
+            return '';
+        }
+
+        $labels = [
+            'box' => 'Box',
+            'fls' => 'Fls / Flacon',
+            'pot' => 'Pot',
+            'tube' => 'Tube',
+            'blister' => 'Blister / Strip',
+            'sachet' => 'Sachet',
+            'ampul' => 'Ampul',
+            'vial' => 'Vial',
+            'catch_cover' => 'Catch Cover',
+            'suppositoria' => 'Suppositoria',
+            'ovula' => 'Ovula',
+            'enema' => 'Enema',
+            'inhaler' => 'Inhaler / Nebules',
+            'pen' => 'Pen',
+            'pcs' => 'Pcs',
+        ];
+
+        $key = strtolower(trim((string) $this->sediaan));
+
+        return $labels[$key] ?? ucfirst(str_replace('_', ' ', $key));
+    }
+
     public function getFormattedPrice(): string
     {
         return 'Rp ' . number_format($this->harga, 0, ',', '.');
