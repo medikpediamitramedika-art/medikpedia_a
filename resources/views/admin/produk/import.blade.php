@@ -53,7 +53,7 @@
         <li>Struktur file tidak harus persis sama; selama header yang dikenali ada, data tetap bisa dimasukkan</li>
     </ol>
     <p style="color:#059669;margin:0.75rem 0 0;font-size:0.875rem;font-weight:600;">
-        ✅ Format: <strong>SKU | PABRIK | BRAND | NAMA PRODUK | SEDIAAN | DESKRIPSI | HARGA | STOK | TERJUAL | GRADE | KOMPOSISI | INDIKASI | KELOMPOK | KATEGORI</strong>
+        ✅ Format: <strong>SKU | DISTRIBUTOR | PABRIK | NAMA PRODUK | SEDIAAN | DESKRIPSI | HARGA | STOK | TERJUAL | GRADE | KOMPOSISI | INDIKASI | KELOMPOK | KATEGORI</strong>
     </p>
 </div>
 
@@ -74,8 +74,8 @@
                 <thead>
                     <tr>
                         <th>SKU</th>
+                        <th>DISTRIBUTOR</th>
                         <th>PABRIK</th>
-                        <th>BRAND</th>
                         <th>NAMA PRODUK</th>
                         <th>SEDIAAN</th>
                         <th>DESKRIPSI</th>
@@ -92,7 +92,7 @@
                 <tbody>
                     <tr>
                         <td>SKU-001</td>
-                        <td>KIMIA FARMA</td>
+                        <td>PT KIMIA FARMA</td>
                         <td>KIMIA FARMA</td>
                         <td>Paracetamol 500mg</td>
                         <td>fls</td>
@@ -108,7 +108,7 @@
                     </tr>
                     <tr>
                         <td>SKU-002</td>
-                        <td>WARDAH</td>
+                        <td>PT WARDAH</td>
                         <td>WARDAH</td>
                         <td>Pelembab Wajah SPF30</td>
                         <td>box</td>
@@ -124,7 +124,7 @@
                     </tr>
                     <tr>
                         <td>SKU-003</td>
-                        <td>OMRON</td>
+                        <td>PT OMRON</td>
                         <td>OMRON</td>
                         <td>Tensimeter Digital</td>
                         <td>-</td>

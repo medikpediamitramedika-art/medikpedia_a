@@ -18,9 +18,6 @@ class DatabaseSeeder extends Seeder
         // Seed admin users
         $this->call(AdminSeeder::class);
 
-        // Seed medicines
-        $this->call(MedicineSeeder::class);
-
         // Seed news
         $this->call(NewsSeeder::class);
     }

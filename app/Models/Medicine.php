@@ -13,6 +13,7 @@ class Medicine extends Model
 
     protected $fillable = [
         'sku',
+        'distributor',
         'nama_obat',
         'sediaan',
         'kelompok',

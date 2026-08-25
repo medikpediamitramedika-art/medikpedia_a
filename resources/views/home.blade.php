@@ -177,26 +177,6 @@
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
 }
 
-.promo-pbf {
-    background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 60%, #43a047 100%);
-}
-
-.promo-pbf-logo {
-    height: 80px;
-    object-fit: contain;
-    flex-shrink: 0;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
-}
-
-.pbf-subtitle {
-    display: block;
-    font-size: 0.75rem;
-    font-weight: 600;
-    opacity: 0.95;
-    line-height: 1.3;
-    letter-spacing: 0.3px;
-}
-
 .promo-card > i {
     font-size: 4rem;
     opacity: 0.95;
@@ -424,7 +404,7 @@
     .promo-card { padding: 1.75rem 1.5rem; min-height: 180px; }
     .promo-card-icon-wrap { width: 70px; height: 70px; border-radius: 16px; }
     .promo-card > i { font-size: 3rem; }
-    .promo-goapotik-logo, .promo-pbf-logo { height: 70px; }
+    .promo-goapotik-logo { height: 70px; }
     .promo-card h4 { font-size: 1.2rem; }
     .promo-card p { font-size: 0.9rem; }
     .cat-grid { grid-template-columns: repeat(3,1fr); }
@@ -442,10 +422,9 @@
     .promo-card { padding: 1.5rem 1.25rem; min-height: 160px; }
     .promo-card-icon-wrap { width: 60px; height: 60px; border-radius: 14px; }
     .promo-card > i { font-size: 2.5rem; }
-    .promo-goapotik-logo, .promo-pbf-logo { height: 60px; }
+    .promo-goapotik-logo { height: 60px; }
     .promo-card h4 { font-size: 1rem; }
     .promo-card p { font-size: 0.85rem; }
-    .pbf-subtitle { font-size: 0.7rem; }
     .cat-grid { grid-template-columns: repeat(3,1fr); }
     .prod-grid { grid-template-columns: repeat(2,1fr); }
     .why-grid { flex-direction: column; align-items: center; gap: 1rem; }
@@ -691,7 +670,7 @@
     .promo-card-icon-wrap { width: 70px; height: 70px; border-radius: 16px; font-size: 2.5rem; }
     .promo-card-text { gap: 0.35rem; }
     .promo-card > i { font-size: 2.8rem; }
-    .promo-goapotik-logo, .promo-pbf-logo { height: 70px; }
+    .promo-goapotik-logo { height: 70px; }
     .promo-card h4 { font-size: 1.15rem; }
     .promo-card p { font-size: 0.88rem; }
 }
@@ -710,10 +689,9 @@
     .promo-card-icon-wrap { width: 60px; height: 60px; border-radius: 14px; font-size: 2rem; }
     .promo-card-text { gap: 0.3rem; }
     .promo-card > i { font-size: 2.2rem; }
-    .promo-goapotik-logo, .promo-pbf-logo { height: 60px; }
+    .promo-goapotik-logo { height: 60px; }
     .promo-card h4 { font-size: 1rem; margin: 0; }
     .promo-card p { font-size: 0.8rem; }
-    .pbf-subtitle { font-size: 0.68rem; }
     .banner-search-panel { padding: 0.6rem 0 0.5rem; }
     .banner-search-box input { font-size: 0.9rem; }
     .banner-search-box button { font-size: 0.75rem; padding: 0.6rem 1rem; }
@@ -976,15 +954,6 @@
           <div class="promo-card-text">
             <h4>GoApotik</h4>
             <p>Kunjungi toko kami di Go Apotik.</p>
-          </div>
-        </div>
-      </a>
-      <a href="{{ route('products.pbf') }}" class="promo-card promo-pbf">
-        <div class="promo-card-content">
-          <img src="{{ asset('LOGO SURYA SHARONE.png') }}" alt="PT Surya Sharone Abadi" class="promo-pbf-logo">
-          <div class="promo-card-text">
-            <h4>PBF<br><span class="pbf-subtitle">PT.SURYA SHARONE ABADI</span></h4>
-            <p>Jelajahi katalog produk PBF terlengkap kami.</p>
           </div>
         </div>
       </a>
@@ -1705,10 +1674,6 @@
       </div>
     </div>
     <div class="cat-grid">
-      <a href="{{ route('products.pbf') }}" class="cat-card">
-        <div class="cat-icon" style="background:#fef3c7;"><i class="fa-solid fa-box" style="color:#f59e0b;"></i></div>
-        <span>PBF</span>
-      </a>
       <a href="{{ route('products.apotek') }}" class="cat-card">
         <div class="cat-icon" style="background:#d1fae5;"><i class="fa-solid fa-store" style="color:#059669;"></i></div>
         <span>Apotek</span>

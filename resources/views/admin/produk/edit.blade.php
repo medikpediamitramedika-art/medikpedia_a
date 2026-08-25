@@ -75,7 +75,16 @@
             <div class="form-body">
 
                 <div class="form-group">
-                    <label class="form-label">Pabrik / Merek <span class="req">*</span></label>
+                    <label class="form-label">Distributor</label>
+                    <input type="text" name="distributor" class="form-input {{ $errors->has('distributor') ? 'is-invalid' : '' }}"
+                           value="{{ old('distributor', $medicine->distributor) }}">
+                    @error('distributor')
+                        <div class="form-error"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Pabrik <span class="req">*</span></label>
                     <input type="text" name="kategori" class="form-input {{ $errors->has('kategori') ? 'is-invalid' : '' }}"
                            value="{{ old('kategori', $medicine->kategori) }}" required>
                     @error('kategori')
@@ -149,14 +158,6 @@
                         <input type="text" name="sku" class="form-input {{ $errors->has('sku') ? 'is-invalid' : '' }}"
                                value="{{ old('sku', $medicine->sku) }}">
                         @error('sku')
-                            <div class="form-error"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Brand</label>
-                        <input type="text" name="brand" class="form-input {{ $errors->has('brand') ? 'is-invalid' : '' }}"
-                               value="{{ old('brand', $medicine->brand) }}">
-                        @error('brand')
                             <div class="form-error"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</div>
                         @enderror
                     </div>

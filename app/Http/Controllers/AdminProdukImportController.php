@@ -33,13 +33,13 @@ class AdminProdukImportController extends Controller
 
     public function downloadTemplate()
     {
-        $columns = ['SKU', 'PABRIK', 'BRAND', 'NAMA PRODUK', 'SEDIAAN', 'DESKRIPSI', 'HARGA', 'STOK', 'TERJUAL', 'GRADE', 'KOMPOSISI', 'INDIKASI', 'KELOMPOK', 'KATEGORI'];
-        $widths  = [12, 18, 18, 30, 10, 35, 12, 8, 10, 8, 25, 30, 12, 22];
+        $columns = ['SKU', 'DISTRIBUTOR', 'PABRIK', 'NAMA PRODUK', 'SEDIAAN', 'DESKRIPSI', 'HARGA', 'STOK', 'TERJUAL', 'GRADE', 'KOMPOSISI', 'INDIKASI', 'KELOMPOK', 'KATEGORI'];
+        $widths  = [12, 25, 18, 30, 10, 35, 12, 8, 10, 8, 25, 30, 12, 22];
 
         $rows = [
-            ['SKU-001', 'KIMIA FARMA', 'KIMIA FARMA',  'Paracetamol 500mg',    'fls', 'Obat pereda demam dan nyeri ringan.',                        '5000',   '100', '20', 'A', 'Paracetamol 500 mg',  'Demam & nyeri',                'PBF',    'OBAT'],
-            ['SKU-002', 'WARDAH',      'WARDAH',        'Pelembab Wajah SPF30', 'box', 'Pelembab wajah untuk kelembapan dan perlindungan SPF30.',    '85000',  '50',  '12', 'B', 'Aqua, Glycerin, SPF', 'Melembabkan & melindungi kulit', 'APOTEK', 'SKINCARE & KOSMETIK'],
-            ['SKU-003', 'OMRON',       'OMRON',         'Tensimeter Digital',   '',    'Tensimeter digital portabel, akurat untuk pemakaian rumah.', '350000', '20',  '5',  'A', '-',                   'Mengukur tekanan darah',        'PBF',    'ALAT KESEHATAN'],
+            ['SKU-001', 'PT KIMIA FARMA', 'KIMIA FARMA', 'Paracetamol 500mg',    'fls', 'Obat pereda demam dan nyeri ringan.',                        '5000',   '100', '20', 'A', 'Paracetamol 500 mg',  'Demam & nyeri',                'PBF',    'OBAT'],
+            ['SKU-002', 'PT WARDAH',      'WARDAH',       'Pelembab Wajah SPF30', 'box', 'Pelembab wajah untuk kelembapan dan perlindungan SPF30.',    '85000',  '50',  '12', 'B', 'Aqua, Glycerin, SPF', 'Melembabkan & melindungi kulit', 'APOTEK', 'SKINCARE & KOSMETIK'],
+            ['SKU-003', 'PT OMRON',       'OMRON',        'Tensimeter Digital',   '',    'Tensimeter digital portabel, akurat untuk pemakaian rumah.', '350000', '20',  '5',  'A', '-',                   'Mengukur tekanan darah',        'PBF',    'ALAT KESEHATAN'],
         ];
 
         return \App\Helpers\XlsxWriter::download('template_produk.xlsx', $columns, $rows, $widths);
@@ -266,7 +266,8 @@ class AdminProdukImportController extends Controller
 
                 $hargaRaw = $data['HARGA'] ?? '0';
                 $sku      = trim((string) ($data['SKU'] ?? ''));
-                $brand    = trim((string) $this->getValue($data, ['BRAND', 'PABRIK', 'MERK']));
+                $distributor = trim((string) ($data['DISTRIBUTOR'] ?? ''));
+                $brand    = trim((string) $this->getValue($data, ['BRAND', 'MERK']));
                 $terjual  = isset($data['TERJUAL']) ? (int) preg_replace('/[^0-9]/', '', (string) $data['TERJUAL']) : 0;
                 $gradeRaw = trim((string) ($data['GRADE'] ?? ''));
                 $grade    = '';
@@ -315,6 +316,7 @@ class AdminProdukImportController extends Controller
                     $match,
                     [
                         'sku'              => $sku ?: null,
+                        'distributor'      => $distributor ?: null,
                         'nama_obat'        => $namaProduk,
                         'sediaan'          => $sediaan,
                         'kelompok'         => $kelompok,
@@ -349,8 +351,9 @@ class AdminProdukImportController extends Controller
         $aliases = [
             'SKU' => ['SKU', 'KODEPRODUK', 'KODE', 'PRODUCTCODE'],
             'NAMA_PRODUK' => ['NAMAPRODUK', 'NAMA', 'NAMABARANG', 'PRODUK', 'PRODUCTNAME'],
-            'PABRIK' => ['PABRIK', 'MERK', 'MEREK', 'BRAND', 'PRODUCER', 'MANUFACTURER'],
-            'BRAND' => ['BRAND', 'MERK', 'MEREK', 'PABRIK', 'PRODUCER', 'MANUFACTURER'],
+            'DISTRIBUTOR' => ['DISTRIBUTOR', 'SUPPLIER', 'DISTRIBUTORNAME'],
+            'PABRIK' => ['PABRIK', 'PRODUSEN', 'PRODUCER', 'MANUFACTURER'],
+            'BRAND' => ['BRAND', 'MERK', 'MEREK'],
             'HARGA' => ['HARGA', 'RETAIL', 'PRICE'],
             'STOK' => ['STOK', 'STOCK', 'STOCKQTY', 'QTY', 'JUMLAH'],
             'TERJUAL' => ['TERJUAL', 'SALES', 'TERJUALSALES', 'TOTALTERJUAL'],
