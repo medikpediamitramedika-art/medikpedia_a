@@ -47,13 +47,13 @@
     <ol>
         <li>Download Template Excel (.xlsx) di bawah</li>
         <li>Isi data produk sesuai kolom yang tersedia</li>
-        <li>Kolom <strong>KATEGORI</strong> harus salah satu dari: <strong>OBAT</strong>, <strong>SKINCARE & KOSMETIK</strong>, <strong>ALAT KESEHATAN</strong></li>
+        <li>Isi tiga harga pada kolom <strong>MODAL</strong>, <strong>HARGA GROSIR</strong>, dan <strong>HARGA RETAIL</strong></li>
         <li>Upload file <strong>.csv</strong>, <strong>.xls</strong>, atau <strong>.xlsx</strong></li>
         <li>Data yang sudah ada (SKU atau nama produk sama) akan diperbarui, data baru akan ditambahkan</li>
         <li>Struktur file tidak harus persis sama; selama header yang dikenali ada, data tetap bisa dimasukkan</li>
     </ol>
     <p style="color:#059669;margin:0.75rem 0 0;font-size:0.875rem;font-weight:600;">
-        ✅ Format: <strong>SKU | DISTRIBUTOR | PABRIK | NAMA PRODUK | SEDIAAN | DESKRIPSI | HARGA | STOK | TERJUAL | GRADE | KOMPOSISI | INDIKASI | KELOMPOK | KATEGORI</strong>
+        ✅ Format: <strong>NO | PRINCIPLE | NAMA PRODUK | LOGO | RESEP | KOMPOSISI | SATUAN | MODAL | HARGA GROSIR | HARGA RETAIL</strong>
     </p>
 </div>
 
@@ -73,89 +73,48 @@
             <table>
                 <thead>
                     <tr>
-                        <th>SKU</th>
-                        <th>DISTRIBUTOR</th>
-                        <th>PABRIK</th>
+                        <th>NO</th>
+                        <th>PRINCIPLE</th>
                         <th>NAMA PRODUK</th>
-                        <th>SEDIAAN</th>
-                        <th>DESKRIPSI</th>
-                        <th>HARGA</th>
-                        <th>STOK</th>
-                        <th>TERJUAL</th>
-                        <th>GRADE</th>
+                        <th>LOGO</th>
+                        <th>RESEP</th>
                         <th>KOMPOSISI</th>
-                        <th>INDIKASI</th>
-                        <th>KELOMPOK</th>
-                        <th>KATEGORI</th>
+                        <th>SATUAN</th>
+                        <th>MODAL</th>
+                        <th>HARGA GROSIR</th>
+                        <th>HARGA RETAIL</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>SKU-001</td>
+                        <td>1</td>
                         <td>PT KIMIA FARMA</td>
-                        <td>KIMIA FARMA</td>
                         <td>Paracetamol 500mg</td>
-                        <td>fls</td>
-                        <td>Pereda demam dan nyeri ringan</td>
-                        <td>5000</td>
-                        <td>100</td>
-                        <td>20</td>
-                        <td>A</td>
+                        <td></td>
+                        <td>BEBAS</td>
                         <td>Paracetamol 500 mg</td>
-                        <td>Demam & nyeri</td>
-                        <td>PBF</td>
-                        <td><span style="background:#e3f2fd;color:#1565C0;padding:0.15rem 0.5rem;border-radius:4px;font-weight:700;">OBAT</span></td>
+                        <td>fls</td><td>4000</td><td>4500</td><td>5000</td>
                     </tr>
                     <tr>
-                        <td>SKU-002</td>
+                        <td>2</td>
                         <td>PT WARDAH</td>
-                        <td>WARDAH</td>
                         <td>Pelembab Wajah SPF30</td>
-                        <td>box</td>
-                        <td>Moisturizer ringan untuk kulit sensitif</td>
-                        <td>85000</td>
-                        <td>50</td>
-                        <td>12</td>
-                        <td>B</td>
+                        <td></td>
+                        <td>BEBAS</td>
                         <td>Aqua, Glycerin, SPF30</td>
-                        <td>Melembabkan & melindungi kulit</td>
-                        <td>APOTEK</td>
-                        <td><span style="background:#fce4ec;color:#c2185b;padding:0.15rem 0.5rem;border-radius:4px;font-weight:700;">SKINCARE & KOSMETIK</span></td>
+                        <td>box</td><td>70000</td><td>78000</td><td>85000</td>
                     </tr>
                     <tr>
-                        <td>SKU-003</td>
+                        <td>3</td>
                         <td>PT OMRON</td>
-                        <td>OMRON</td>
                         <td>Tensimeter Digital</td>
+                        <td></td>
+                        <td>BEBAS</td>
                         <td>-</td>
-                        <td>Alat pemeriksa tekanan darah portabel</td>
-                        <td>350000</td>
-                        <td>20</td>
-                        <td>5</td>
-                        <td>A</td>
-                        <td>-</td>
-                        <td>Mengukur tekanan darah</td>
-                        <td>PBF</td>
-                        <td><span style="background:#e8f5e9;color:#2e7d32;padding:0.15rem 0.5rem;border-radius:4px;font-weight:700;">ALAT KESEHATAN</span></td>
+                        <td>pcs</td><td>300000</td><td>325000</td><td>350000</td>
                     </tr>
                 </tbody>
             </table>
-        </div>
-        <div style="margin-top:0.75rem;padding:0.75rem;background:#fef3c7;border-radius:0.5rem;border:1px solid #fde68a;">
-            <p style="font-size:0.78rem;color:#92400e;margin:0;line-height:1.6;">
-                <i class="fa-solid fa-lightbulb" style="margin-right:0.3rem;"></i>
-                <strong>Kolom KATEGORI</strong> harus salah satu dari:
-                <strong>OBAT</strong> &nbsp;|&nbsp;
-                <strong>SKINCARE & KOSMETIK</strong> &nbsp;|&nbsp;
-                <strong>ALAT KESEHATAN</strong>.
-                Jika tidak diisi atau tidak sesuai, otomatis masuk ke <strong>OBAT</strong>.
-            </p>
-        </div>
-        <div style="margin-top:0.75rem;padding:0.75rem;background:#f0fdf4;border-radius:0.5rem;border:1px solid #bbf7d0;">
-            <p style="font-size:0.78rem;color:#14532d;margin:0;line-height:1.6;">
-                <i class="fa-solid fa-lightbulb" style="margin-right:0.3rem;"></i>
-                <strong>Kolom KELOMPOK:</strong> Gunakan <strong>PBF</strong> atau <strong>APOTEK</strong> (opsional, boleh dikosongkan)
-            </p>
         </div>
     </div>
 </div>

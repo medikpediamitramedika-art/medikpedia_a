@@ -617,9 +617,15 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('admin.produk.index') }}" class="@if(str_contains(Route::current()->getName() ?? '', 'admin.produk')) active @endif">
+                    <a href="{{ route('admin.produk.index') }}" class="@if(Route::current()->getName() === 'admin.produk.index') active @endif">
                         <span>🛒</span>
                         <span>Produk Kami</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.produk-pbf.index') }}" class="@if(Route::current()->getName() === 'admin.produk-pbf.index') active @endif">
+                        <span>📦</span>
+                        <span>Produk Pemesanan PBF</span>
                     </a>
                 </li>
                 <li>

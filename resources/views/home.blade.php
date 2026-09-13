@@ -150,6 +150,12 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+  .promo-wholesale-logo {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+  }
+
 .promo-card-text {
     display: flex;
     flex-direction: column;
@@ -164,6 +170,10 @@
 
 .promo-contact {
     background: linear-gradient(135deg, #1565C0 0%, #1E88E5 100%);
+}
+
+.promo-wholesale {
+  background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
 }
 
 .promo-goapotik {
@@ -227,6 +237,7 @@
     overflow: hidden; position: relative;
 }
 .prod-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+.prod-img img.product-placeholder-logo { width: 72%; height: 72%; object-fit: contain; }
 .prod-card:hover .prod-img img { transform: scale(1.06); }
 .prod-img .no-img-icon { font-size: 2.5rem; color: #90caf9; }
 .prod-badge-label {
@@ -705,6 +716,11 @@
     width: 100%;
 }
 
+  .search-engine-section.no-banner {
+    padding-top: 2.75rem;
+    padding-bottom: 2.75rem;
+  }
+
 .search-engine-wrapper {
     display: flex;
     gap: 1rem;
@@ -821,6 +837,10 @@
 @media (max-width: 768px) {
     .search-engine-section {
         padding: 1.5rem 0;
+    }
+
+    .search-engine-section.no-banner {
+      padding: 1.5rem 0;
     }
 
     .search-engine-wrapper {
@@ -948,6 +968,17 @@
           </div>
         </div>
       </a>
+      <a href="{{ route('products.grosir') }}" class="promo-card promo-wholesale">
+        <div class="promo-card-content">
+          <div class="promo-card-icon-wrap">
+            <img src="{{ asset('logo1.png') }}" alt="Logo Medikpedia" class="promo-wholesale-logo">
+          </div>
+          <div class="promo-card-text">
+            <h4>Belanja Grosir</h4>
+            <p>Harga khusus grosir dengan kode akses.</p>
+          </div>
+        </div>
+      </a>
       <a href="https://store.goapotik.com/penjual/apotek-medikpedia" target="_blank" rel="noopener" class="promo-card promo-goapotik">
         <div class="promo-card-content">
           <img src="{{ asset('LOGO GOAPOTIK.png') }}" alt="GoApotik" class="promo-goapotik-logo">
@@ -964,7 +995,7 @@
 {{-- KATEGORI PILIHAN --}}
 @include('components.category-selection')
 
-<div class="search-engine-section">
+<div class="search-engine-section {{ $banners->count() ? '' : 'no-banner' }}">
     <div class="container">
         <div class="search-engine-wrapper">
             <form method="GET" action="{{ route('products.index') }}" class="search-engine-box">
@@ -984,6 +1015,7 @@
     </div>
 </div>
 
+@if(false)
 <style>
 /* ===== FEATURED CAROUSEL ===== */
 .featured-section { padding: 3rem 0; }
@@ -1087,7 +1119,7 @@
             @if($med->gambar)
               <img src="{{ url('storage/'.$med->gambar) }}" alt="{{ $med->nama_obat }}" loading="lazy">
             @else
-              <i class="fa-solid fa-pills no-img-icon"></i>
+              <img class="product-placeholder-logo" src="{{ asset('logo1.png') }}" alt="Logo Medikpedia">
             @endif
             @if($med->kategori_produk)
               <span class="prod-badge-label">{{ $med->kategori_produk==='SKINCARE & KOSMETIK'?'✨':($med->kategori_produk==='ALAT KESEHATAN'?'🩺':'💊') }}</span>
@@ -1096,25 +1128,16 @@
           <div class="prod-body">
             @if($med->kategori)<span class="prod-brand-tag">{{ $med->kategori }}</span>@endif
             <h3 class="prod-name">{{ $med->nama_obat }}</h3>
-            <div class="prod-price">{{ $med->getFormattedPrice() }}</div>
+            <div class="prod-price">{{ $med->getFormattedCatalogPrice('harga_retail') }}</div>
             @if($med->sediaan_label)
               <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.35rem;display:flex;align-items:center;gap:0.35rem;">
                 <i class="fa-solid fa-cube"></i> <span>{{ $med->sediaan_label }}</span>
               </div>
             @endif
-            @if($med->stok > 10)
-              <span class="stock-ok"><i class="fa-solid fa-circle-check"></i> Stok Tersedia</span>
-            @elseif($med->stok > 0)
-              <span class="stock-low"><i class="fa-solid fa-triangle-exclamation"></i> Sisa {{ $med->stok }}</span>
-            @else
-              <span class="stock-out"><i class="fa-solid fa-circle-xmark"></i> Habis</span>
-            @endif
             <a href="{{ route('medicines.show', $med->id) }}" class="btn-detail">Lihat Detail <i class="fa-solid fa-arrow-right"></i></a>
-            @if($med->stok > 0)
-            <button class="btn-cart" onclick="addToCart({{ $med->id }},'{{ addslashes($med->nama_obat) }}',{{ $med->harga }},'{{ $med->gambar ? url('storage/'.$med->gambar) : '' }}','{{ addslashes($med->brand ?: $med->kategori) }}',this)">
+            <button class="btn-cart" onclick="addToCart({{ $med->id }},'{{ addslashes($med->nama_obat) }}',{{ $med->harga_retail ?: $med->harga }},'{{ $med->gambar ? url('storage/'.$med->gambar) : '' }}','{{ addslashes($med->brand ?: $med->kategori) }}',this)">
               <i class="fa-solid fa-cart-plus"></i> Keranjang
             </button>
-            @endif
           </div>
         </div>
         @endforeach
@@ -1199,6 +1222,8 @@
     });
 })();
 </script>
+
+@endif
 
 
 {{-- PROMO PRODUK --}}
@@ -1748,7 +1773,7 @@
               @if($med->gambar)
                 <img src="{{ url('storage/' . $med->gambar) }}" alt="{{ $med->nama_obat }}">
               @else
-                <div class="prod-img-fallback"><i class="fa-solid fa-pills"></i></div>
+                <img class="product-placeholder-logo" src="{{ asset('logo1.png') }}" alt="Logo Medikpedia">
               @endif
               @if($med->kategori_produk)
                 <span class="prod-badge-label">{{ $med->kategori_produk==='SKINCARE & KOSMETIK'?'✨':($med->kategori_produk==='ALAT KESEHATAN'?'🩺':'💊') }}</span>
@@ -1759,24 +1784,17 @@
                 <span class="prod-brand-tag">{{ $med->kategori }}</span>
               @endif
               <h3 class="prod-name">{{ $med->nama_obat }}</h3>
-              <div class="prod-price">{{ $med->getFormattedPrice() }}</div>
+              <div class="prod-price">{{ $med->getFormattedCatalogPrice('harga_retail') }}</div>
               @if($med->sediaan_label)
                 <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.35rem;display:flex;align-items:center;gap:0.35rem;">
                   <i class="fa-solid fa-cube"></i> <span>{{ $med->sediaan_label }}</span>
                 </div>
               @endif
-              @if($med->stok > 0)
-                <div class="prod-stock">Stok: {{ $med->stok }}</div>
-              @else
-                <div class="prod-stock prod-stock-out">Habis</div>
-              @endif
               <div class="prod-actions">
                 <a href="{{ route('medicines.show', $med->id) }}" class="btn-detail">Lihat Detail <i class="fa-solid fa-arrow-right"></i></a>
-                @if($med->stok > 0)
-                  <button class="btn-cart" onclick="addToCart({{ $med->id }},'{{ addslashes($med->nama_obat) }}',{{ $med->harga }},'{{ $med->gambar ? url('storage/'.$med->gambar) : '' }}','{{ addslashes($med->brand ?: $med->kategori) }}',this)">
+                  <button class="btn-cart" onclick="addToCart({{ $med->id }},'{{ addslashes($med->nama_obat) }}',{{ $med->harga_retail ?: $med->harga }},'{{ $med->gambar ? url('storage/'.$med->gambar) : '' }}','{{ addslashes($med->brand ?: $med->kategori) }}',this)">
                     <i class="fa-solid fa-cart-plus"></i> Keranjang
                   </button>
-                @endif
               </div>
             </div>
           </div>
@@ -1791,5 +1809,6 @@
 @endsection
 
 @section('scripts')
+<script>window.cartSettings = { storageKey: 'medikpedia_cart_retail' };</script>
 @include('partials.cart')
 @endsection

@@ -117,12 +117,15 @@
 
 <div class="page-header">
     <div class="page-header-left">
-        <h2>🛒 Daftar Produk</h2>
+        <h2>{{ ($mode ?? '') === 'pbf' ? '📦 Produk Pemesanan PBF - Harga Modal' : '🛒 Daftar Produk' }}</h2>
         <p>Total <strong>{{ $total }}</strong> produk terdaftar</p>
     </div>
     <div class="page-header-actions">
         <a href="{{ route('admin.produk.import') }}" class="btn-icon btn-icon-outline">
             <i class="fa-solid fa-file-import"></i> Import Excel
+        </a>
+        <a href="{{ route('admin.produk.export', request()->only('mode')) }}" class="btn-icon btn-icon-outline">
+            <i class="fa-solid fa-file-export"></i> Export Excel
         </a>
         <a href="{{ route('admin.produk.create') }}" class="btn-icon btn-icon-primary">
             <i class="fa-solid fa-plus"></i> Tambah Produk
@@ -214,7 +217,9 @@
                     <th>Kelompok</th>
                     <th>Kategori</th>
                     <th>Pabrik/Merek</th>
-                    <th>Harga</th>
+                    <th>Modal</th>
+                    <th>Grosir</th>
+                    <th>Retail</th>
                     <th>Stok</th>
                     <th>Ditambahkan</th>
                     <th style="width:130px;">Aksi</th>
@@ -265,7 +270,9 @@
                         <span class="kat-badge {{ $cls }}">{{ $medicine->kategori_produk }}</span>
                     </td>
                     <td><span style="font-size:0.82rem;color:#6b7280;">{{ $medicine->kategori }}</span></td>
-                    <td><span class="price-text">{{ $medicine->getFormattedPrice() }}</span></td>
+                    <td><span class="price-text">{{ $medicine->getFormattedCatalogPrice('harga_modal') }}</span></td>
+                    <td><span class="price-text">{{ $medicine->getFormattedCatalogPrice('harga_grosir') }}</span></td>
+                    <td><span class="price-text">{{ $medicine->getFormattedCatalogPrice('harga_retail') }}</span></td>
                     <td>
                         @if($medicine->stok > 10)
                             <span class="stock-badge stock-ok">{{ $medicine->stok }}</span>

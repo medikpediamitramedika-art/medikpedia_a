@@ -33,13 +33,13 @@ class AdminProdukImportController extends Controller
 
     public function downloadTemplate()
     {
-        $columns = ['SKU', 'DISTRIBUTOR', 'PABRIK', 'NAMA PRODUK', 'SEDIAAN', 'DESKRIPSI', 'HARGA', 'STOK', 'TERJUAL', 'GRADE', 'KOMPOSISI', 'INDIKASI', 'KELOMPOK', 'KATEGORI'];
-        $widths  = [12, 25, 18, 30, 10, 35, 12, 8, 10, 8, 25, 30, 12, 22];
+        $columns = ['NO', 'PRINCIPLE', 'NAMA PRODUK', 'LOGO', 'RESEP', 'KOMPOSISI', 'SATUAN', 'MODAL', 'HARGA GROSIR', 'HARGA RETAIL'];
+        $widths  = [8, 25, 30, 15, 12, 30, 12, 15, 18, 18];
 
         $rows = [
-            ['SKU-001', 'PT KIMIA FARMA', 'KIMIA FARMA', 'Paracetamol 500mg',    'fls', 'Obat pereda demam dan nyeri ringan.',                        '5000',   '100', '20', 'A', 'Paracetamol 500 mg',  'Demam & nyeri',                'PBF',    'OBAT'],
-            ['SKU-002', 'PT WARDAH',      'WARDAH',       'Pelembab Wajah SPF30', 'box', 'Pelembab wajah untuk kelembapan dan perlindungan SPF30.',    '85000',  '50',  '12', 'B', 'Aqua, Glycerin, SPF', 'Melembabkan & melindungi kulit', 'APOTEK', 'SKINCARE & KOSMETIK'],
-            ['SKU-003', 'PT OMRON',       'OMRON',        'Tensimeter Digital',   '',    'Tensimeter digital portabel, akurat untuk pemakaian rumah.', '350000', '20',  '5',  'A', '-',                   'Mengukur tekanan darah',        'PBF',    'ALAT KESEHATAN'],
+            ['1', 'PT KIMIA FARMA', 'Paracetamol 500mg', '', 'BEBAS', 'Paracetamol 500 mg', 'fls', '4000', '4500', '5000'],
+            ['2', 'PT WARDAH', 'Pelembab Wajah SPF30', '', 'BEBAS', 'Aqua, Glycerin, SPF', 'box', '70000', '78000', '85000'],
+            ['3', 'PT OMRON', 'Tensimeter Digital', '', 'BEBAS', 'Mengukur tekanan darah', 'pcs', '300000', '325000', '350000'],
         ];
 
         return \App\Helpers\XlsxWriter::download('template_produk.xlsx', $columns, $rows, $widths);
@@ -261,6 +261,11 @@ class AdminProdukImportController extends Controller
                     continue;
                 }
 
+                $hargaRetail = $this->parseHarga($this->getValue($data, ['HARGA RETAIL', 'HARGA', 'RETAIL']));
+                $hargaModal = $this->parseHarga($this->getValue($data, ['MODAL', 'HARGA MODAL']));
+                $hargaGrosir = $this->parseHarga($this->getValue($data, ['HARGA GROSIR', 'GROSIR']));
+                [$hargaModal, $hargaGrosir, $hargaRetail] = $this->normalizeCatalogPrices($hargaModal, $hargaGrosir, $hargaRetail);
+
                 $katRaw    = strtoupper(trim((string) ($data['KATEGORI'] ?? '')));
                 $katProduk = in_array($katRaw, $validKategori) ? $katRaw : 'OBAT';
 
@@ -323,8 +328,11 @@ class AdminProdukImportController extends Controller
                         'kategori'         => $data['PABRIK'] ?? ($data['BRAND'] ?? ''),
                         'brand'            => $brand ?: null,
                         'kategori_produk'  => $katProduk,
-                        'harga'            => $this->parseHarga($hargaRaw),
-                        'stok'             => isset($data['STOK']) ? (int) preg_replace('/[^0-9]/', '', (string) $data['STOK']) : 0,
+                        'harga'            => $hargaRetail ?: $this->parseHarga($hargaRaw),
+                        'harga_modal'     => $hargaModal,
+                        'harga_grosir'    => $hargaGrosir,
+                        'harga_retail'    => $hargaRetail ?: $this->parseHarga($hargaRaw),
+                        'stok'             => 0,
                         'terjual'          => $terjual,
                         'grade'            => $grade ?: null,
                         'deskripsi'        => $deskripsiValue,
@@ -352,9 +360,12 @@ class AdminProdukImportController extends Controller
             'SKU' => ['SKU', 'KODEPRODUK', 'KODE', 'PRODUCTCODE'],
             'NAMA_PRODUK' => ['NAMAPRODUK', 'NAMA', 'NAMABARANG', 'PRODUK', 'PRODUCTNAME'],
             'DISTRIBUTOR' => ['DISTRIBUTOR', 'SUPPLIER', 'DISTRIBUTORNAME'],
-            'PABRIK' => ['PABRIK', 'PRODUSEN', 'PRODUCER', 'MANUFACTURER'],
+            'PABRIK' => ['PABRIK', 'PRINCIPLE', 'PRINCIPAL', 'PRODUSEN', 'PRODUCER', 'MANUFACTURER'],
             'BRAND' => ['BRAND', 'MERK', 'MEREK'],
             'HARGA' => ['HARGA', 'RETAIL', 'PRICE'],
+            'MODAL' => ['MODAL', 'HARGAMODAL', 'COST'],
+            'HARGA GROSIR' => ['HARGAGROSIR', 'GROSIR', 'WHOLESALE'],
+            'HARGA RETAIL' => ['HARGARETAIL', 'RETAILPRICE'],
             'STOK' => ['STOK', 'STOCK', 'STOCKQTY', 'QTY', 'JUMLAH'],
             'TERJUAL' => ['TERJUAL', 'SALES', 'TERJUALSALES', 'TOTALTERJUAL'],
             'GRADE' => ['GRADE', 'KELAS', 'CLASS'],
@@ -362,7 +373,7 @@ class AdminProdukImportController extends Controller
             'KOMPOSISI' => ['KOMPOSISI', 'COMPOSITION'],
             'INDIKASI' => ['INDIKASI', 'INDICATION', 'MANFAAT'],
             'KATEGORI' => ['KATEGORI', 'KATEGORIPRODUK', 'CATEGORY', 'TIPE', 'JENIS'],
-            'SEDIAAN' => ['SEDIAAN', 'KEMASAN', 'PACKAGING'],
+            'SEDIAAN' => ['SEDIAAN', 'SATUAN', 'KEMASAN', 'PACKAGING'],
             'KELOMPOK' => ['KELOMPOK', 'GROUP', 'GRUP'],
         ];
 
@@ -394,14 +405,42 @@ class AdminProdukImportController extends Controller
 
     private function parseHarga($value): float
     {
-        if (!$value) return 0;
+        $value = trim((string) $value);
+        if ($value === '') return 0;
+
         $value = str_replace(['Rp', 'rp', ' '], '', $value);
+        $dotParts = explode('.', $value);
+
         if (str_contains($value, ',')) {
             $value = str_replace('.', '', $value);
             $value = str_replace(',', '.', $value);
+        } elseif (count($dotParts) === 2 && strlen($dotParts[1]) <= 2) {
+            // Excel may send a decimal value such as 5000.00.
+            $value = str_replace(',', '.', $value);
         } else {
+            // Dots between three-digit groups are thousands separators.
             $value = str_replace('.', '', $value);
         }
-        return (float) $value;
+
+        $parsed = (float) $value;
+        if ($parsed > 1000000000 && count($dotParts) > 2) {
+            // Reject malformed concatenated groups such as 78.967.010.000.000.000.
+            $parsed = (float) (($dotParts[0] * 1000) + (int) ($dotParts[1] ?? 0));
+        }
+
+        return $parsed;
+    }
+
+    private function normalizeCatalogPrices(float $modal, float $grosir, float $retail): array
+    {
+        if ($modal <= 0) return [$modal, $grosir, $retail];
+
+        foreach (['grosir', 'retail'] as $type) {
+            while ($$type > ($modal * 5) && $$type > 0) {
+                $$type /= 10;
+            }
+        }
+
+        return [$modal, round($grosir), round($retail)];
     }
 }

@@ -84,7 +84,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Pabrik <span class="req">*</span></label>
+                    <label class="form-label">Principle / Pabrik <span class="req">*</span></label>
                     <input type="text" name="kategori" class="form-input {{ $errors->has('kategori') ? 'is-invalid' : '' }}"
                            value="{{ old('kategori', $medicine->kategori) }}" required>
                     @error('kategori')
@@ -102,7 +102,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Sediaan</label>
+                    <label class="form-label">Satuan / Sediaan</label>
                     <input type="text" name="sediaan"
                            class="form-input {{ $errors->has('sediaan') ? 'is-invalid' : '' }}"
                            placeholder="Contoh: fls, box, tube, pcs atau ketik bebas"
@@ -135,7 +135,17 @@
 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label">Harga (Rp) <span class="req">*</span></label>
+                        <label class="form-label">Modal (Rp)</label>
+                        <input type="number" name="harga_modal" class="form-input" step="1" min="0" value="{{ old('harga_modal', $medicine->harga_modal) }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Harga Grosir (Rp)</label>
+                        <input type="number" name="harga_grosir" class="form-input" step="1" min="0" value="{{ old('harga_grosir', $medicine->harga_grosir) }}">
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Harga Retail (Rp) <span class="req">*</span></label>
                         <input type="number" name="harga" class="form-input {{ $errors->has('harga') ? 'is-invalid' : '' }}"
                                step="1" min="0" value="{{ old('harga', $medicine->harga) }}" required>
                         @error('harga')
@@ -183,7 +193,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Komposisi / Bahan</label>
+                    <label class="form-label">Komposisi</label>
                     <textarea name="komposisi" class="form-input" rows="3"
                               placeholder="Contoh: Paracetamol 500 mg, Aqua, Glycerin...">{{ old('komposisi', $medicine->komposisi) }}</textarea>
                 </div>
@@ -195,7 +205,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Kategori Produk <span class="req">*</span></label>
+                    <label class="form-label">Kategori Produk / Resep <span class="req">*</span></label>
                     <div class="kat-selector">
                         @foreach($kategoriOptions as $kat)
                             @php
@@ -229,7 +239,7 @@
         <div class="form-card">
             <div class="form-card-header">
                 <div class="header-icon"><i class="fa-solid fa-image"></i></div>
-                <h3>Foto Produk</h3>
+                <h3>Logo (LOGO)</h3>
             </div>
             <div class="form-body">
                 @if($medicine->gambar)

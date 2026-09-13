@@ -3,15 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\PurchaseHistory;
+use App\Models\Medicine;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 
 class PurchaseHistoryController extends Controller
 {
     public function store(Request $request)
     {
         $data = $request->validate([
-            'buyer_type'      => ['required', 'string', 'in:umum,apotik,pbf'],
+            'buyer_type'      => ['required', 'string', 'in:umum,apotik,dokter,pbf'],
             'buyer_name'      => ['required', 'string', 'max:255'],
+            'requester_name'  => ['nullable', 'string', 'max:255'],
+            'outlet_name'     => ['nullable', 'string', 'max:255'],
+            'pbf_name'        => ['nullable', 'string', 'max:255'],
+            'pbf_address'     => ['nullable', 'string'],
             'phone'           => ['nullable', 'string', 'max:255'],
             'address'         => ['nullable', 'string'],
             'kecamatan'       => ['nullable', 'string', 'max:255'],
@@ -50,6 +56,34 @@ class PurchaseHistoryController extends Controller
         return response()->json([
             'success' => true,
             'id' => $history->id,
+            'invoice_url' => URL::temporarySignedRoute(
+                'orders.invoice',
+                now()->addDays(30),
+                ['order' => $history->id]
+            ),
         ]);
+    }
+
+    public function invoice(PurchaseHistory $order)
+    {
+        $items = is_string($order->items) ? json_decode($order->items, true) : ($order->items ?? []);
+        $items = is_array($items) ? $items : [];
+
+        return view('orders.invoice', compact('order', 'items'));
+    }
+
+    public function purchaseOrder(PurchaseHistory $order)
+    {
+        $items = is_string($order->items) ? json_decode($order->items, true) : ($order->items ?? []);
+        $items = is_array($items) ? $items : [];
+        $items = array_map(function (array $item): array {
+            if (!empty($item['id'])) {
+                $item['harga_modal'] = Medicine::whereKey($item['id'])->value('harga_modal')
+                    ?: ($item['harga'] ?? $item['price'] ?? 0);
+            }
+            return $item;
+        }, $items);
+
+        return view('admin.purchase-order', compact('order', 'items'));
     }
 }

@@ -28,6 +28,7 @@ class PurchaseHistoryTest extends TestCase
         ]);
 
         $response->assertOk();
+        $response->assertJsonStructure(['success', 'id', 'invoice_url']);
         $this->assertDatabaseHas('purchase_histories', [
             'buyer_name' => 'Apotik Sehat',
             'buyer_type' => 'apotik',
@@ -57,6 +58,28 @@ class PurchaseHistoryTest extends TestCase
             'buyer_name' => 'PT Contoh PBF',
             'buyer_type' => 'pbf',
             'total' => 10000,
+        ]);
+    }
+
+    public function test_purchase_history_can_store_doctor_buyer_details(): void
+    {
+        $response = $this->postJson('/orders/history', [
+            'buyer_type' => 'dokter',
+            'buyer_name' => 'Dr. Contoh',
+            'requester_name' => 'Admin Klinik',
+            'outlet_name' => 'Klinik Sehat',
+            'phone' => '081234567892',
+            'address' => 'Jl. Dokter No. 5',
+            'items' => [],
+            'total' => 0,
+        ]);
+
+        $response->assertOk()->assertJsonStructure(['success', 'id', 'invoice_url']);
+        $this->assertDatabaseHas('purchase_histories', [
+            'buyer_name' => 'Dr. Contoh',
+            'requester_name' => 'Admin Klinik',
+            'outlet_name' => 'Klinik Sehat',
+            'buyer_type' => 'dokter',
         ]);
     }
 }

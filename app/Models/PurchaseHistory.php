@@ -9,6 +9,10 @@ class PurchaseHistory extends Model
     protected $fillable = [
         'buyer_type',
         'buyer_name',
+        'requester_name',
+        'outlet_name',
+        'pbf_name',
+        'pbf_address',
         'phone',
         'address',
         'kecamatan',

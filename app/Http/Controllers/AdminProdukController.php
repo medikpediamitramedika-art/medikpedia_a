@@ -17,8 +17,16 @@ class AdminProdukController extends Controller
         $search          = $request->get('search', '');
         $kategori_produk = $request->get('kategori_produk', '');
         $pabrik          = $request->get('pabrik', '');
+        $kelompok        = $request->get('kelompok', '');
+        $mode             = $request->get('mode', '');
 
         $query = Medicine::latest();
+        if ($kelompok) {
+            $query->where('kelompok', $kelompok);
+        }
+        if ($mode === 'pbf') {
+            $query->where('harga_modal', '>', 0);
+        }
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -37,12 +45,46 @@ class AdminProdukController extends Controller
         }
 
         $medicines       = $query->paginate(15)->withQueryString();
-        $total           = Medicine::count();
+        $total           = (clone $query)->reorder()->count();
         $kategoriOptions = Companies::LIST;
 
         return view('admin.produk.index', compact(
-            'medicines', 'search', 'kategori_produk', 'pabrik', 'total', 'kategoriOptions'
+            'medicines', 'search', 'kategori_produk', 'pabrik', 'kelompok', 'mode', 'total', 'kategoriOptions'
         ));
+    }
+
+    public function indexPbf(Request $request)
+    {
+        $search = $request->get('search', '');
+        $query = Medicine::where('harga_modal', '>', 0)->latest();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_obat', 'like', "%{$search}%")
+                    ->orWhere('kategori', 'like', "%{$search}%")
+                    ->orWhere('deskripsi', 'like', "%{$search}%");
+            });
+        }
+
+        return view('admin.products-ordering', [
+            'medicines' => $query->paginate(15)->withQueryString(),
+            'search' => $search,
+            'total' => Medicine::where('harga_modal', '>', 0)->count(),
+        ]);
+    }
+
+    public function export(Request $request)
+    {
+        $products = Medicine::when($request->get('mode') === 'pbf', fn ($query) => $query->where('harga_modal', '>', 0))
+            ->orderBy('nama_obat')->get();
+        $columns = ['NO', 'PRINCIPLE', 'NAMA PRODUK', 'LOGO', 'RESEP', 'KOMPOSISI', 'SATUAN', 'MODAL', 'HARGA GROSIR', 'HARGA RETAIL'];
+        $rows = $products->values()->map(fn ($product, $index) => [
+            $index + 1, $product->brand ?: $product->kategori, $product->nama_obat, $product->gambar ?: '',
+            $product->grade ?: 'BEBAS', $product->komposisi ?: '', $product->sediaan ?: '',
+            $product->harga_modal, $product->harga_grosir, $product->harga_retail ?: $product->harga,
+        ])->all();
+
+        return \App\Helpers\XlsxWriter::download('produk_tanpa_stok.xlsx', $columns, $rows, [8, 25, 30, 18, 12, 30, 12, 15, 18, 18]);
     }
 
     public function create()
@@ -65,6 +107,9 @@ class AdminProdukController extends Controller
             'terjual'         => ['nullable', 'integer', 'min:0'],
             'grade'           => ['nullable', 'string'],
             'harga'           => ['required', 'numeric', 'min:0'],
+            'harga_modal'     => ['nullable', 'numeric', 'min:0'],
+            'harga_grosir'    => ['nullable', 'numeric', 'min:0'],
+            'harga_retail'    => ['nullable', 'numeric', 'min:0'],
             'stok'            => ['required', 'integer', 'min:0'],
             'sediaan'         => ['nullable', 'string', 'max:255'],
             'deskripsi'       => ['nullable', 'string'],
@@ -82,6 +127,7 @@ class AdminProdukController extends Controller
             $validated['deskripsi'] = trim(($validated['komposisi'] ?? '') . ' | ' . ($validated['indikasi'] ?? ''));
         }
 
+            $validated['harga_retail'] = $validated['harga_retail'] ?? $validated['harga'];
         Medicine::create($validated);
 
         return redirect()->route('admin.produk.index')
@@ -109,6 +155,9 @@ class AdminProdukController extends Controller
             'terjual'         => ['nullable', 'integer', 'min:0'],
             'grade'           => ['nullable', 'string'],
             'harga'           => ['required', 'numeric', 'min:0'],
+            'harga_modal'     => ['nullable', 'numeric', 'min:0'],
+            'harga_grosir'    => ['nullable', 'numeric', 'min:0'],
+            'harga_retail'    => ['nullable', 'numeric', 'min:0'],
             'stok'            => ['required', 'integer', 'min:0'],
             'sediaan'         => ['nullable', 'string', 'max:255'],
             'deskripsi'       => ['nullable', 'string'],
@@ -126,6 +175,7 @@ class AdminProdukController extends Controller
             ImageHelper::deleteProductImage($produk->gambar);
             $validated['gambar'] = null;
         }
+            $validated['harga_retail'] = $validated['harga_retail'] ?? $validated['harga'];
 
         if (!empty(trim($validated['deskripsi'] ?? ''))) {
             $validated['deskripsi'] = trim($validated['deskripsi']);
@@ -185,7 +235,7 @@ class AdminProdukController extends Controller
     {
         $params = [];
 
-        foreach (['search', 'kategori_produk', 'pabrik', 'page'] as $field) {
+        foreach (['search', 'kategori_produk', 'pabrik', 'kelompok', 'mode', 'page'] as $field) {
             $value = $request->query($field, $request->input($field));
             if ($value !== null && $value !== '') {
                 $params[$field] = $value;

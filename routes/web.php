@@ -43,8 +43,14 @@ Route::get('/products/{id}', [ProductController::class, 'show'])->name('products
 Route::get('/products-pbf', [ProductController::class, 'pbf'])->name('products.pbf');
 Route::post('/products-pbf/verify', [ProductController::class, 'pbfVerify'])->name('products.pbf.verify');
 Route::post('/products-pbf/logout', [ProductController::class, 'pbfLogout'])->name('products.pbf.logout');
-Route::get('/products-apotek', [ProductController::class, 'apotek'])->name('products.apotek');
+Route::get('/products-apotek', [ProductController::class, 'grosir'])->name('products.apotek');
+Route::get('/belanja-grosir', [ProductController::class, 'grosir'])->name('products.grosir');
+Route::post('/belanja-grosir/verify', [ProductController::class, 'grosirVerify'])->name('products.grosir.verify');
+Route::post('/belanja-grosir/logout', [ProductController::class, 'grosirLogout'])->name('products.grosir.logout');
 Route::post('/orders/history', [PurchaseHistoryController::class, 'store'])->name('orders.history.store');
+Route::get('/invoice/{order}', [PurchaseHistoryController::class, 'invoice'])
+    ->middleware('signed')
+    ->name('orders.invoice');
 
 // Category routes (Layer 2 & 3)
 Route::get('/category/{main}/{sub}', [CategoryController::class, 'layer2'])->name('category.layer2');
@@ -67,6 +73,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/stats', [AdminDashboardController::class, 'stats'])->name('dashboard.stats');
     Route::get('/purchase-history', [AdminDashboardController::class, 'purchaseHistory'])->name('purchase-history.index');
+    Route::get('/purchase-history/{order}/purchase-order', [PurchaseHistoryController::class, 'purchaseOrder'])->name('purchase-history.purchase-order');
     Route::get('/purchase-history/export', [AdminDashboardController::class, 'exportPurchaseHistory'])->name('purchase-history.export');
     Route::post('/purchase-history/{order}/approval', [AdminDashboardController::class, 'updateApprovalStatus'])->name('purchase-history.approval');
     Route::delete('/purchase-history/{order}', [AdminDashboardController::class, 'destroy'])->name('purchase-history.destroy');
@@ -94,6 +101,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Produk management
     Route::delete('produk/bulk-delete', [AdminProdukController::class, 'destroyMany'])->name('produk.destroyMany');
+    Route::get('produk-pbf', [AdminProdukController::class, 'indexPbf'])->name('produk-pbf.index');
+    Route::get('produk-export', [AdminProdukController::class, 'export'])->name('produk.export');
     Route::resource('produk', AdminProdukController::class);
     Route::post('produk/{produk}/update-stock', [AdminProdukController::class, 'updateStock'])->name('produk.update-stock');
     Route::get('produk-import', [AdminProdukImportController::class, 'showImportForm'])->name('produk.import');

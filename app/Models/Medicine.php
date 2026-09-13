@@ -21,6 +21,9 @@ class Medicine extends Model
         'brand',
         'kategori_produk',
         'harga',
+        'harga_modal',
+        'harga_grosir',
+        'harga_retail',
         'stok',
         'terjual',
         'grade',
@@ -32,6 +35,9 @@ class Medicine extends Model
 
     protected $casts = [
         'harga'   => 'decimal:2',
+        'harga_modal'  => 'decimal:2',
+        'harga_grosir' => 'decimal:2',
+        'harga_retail' => 'decimal:2',
         'stok'    => 'integer',
         'terjual' => 'integer',
     ];
@@ -97,6 +103,12 @@ class Medicine extends Model
     public function getFormattedPrice(): string
     {
         return 'Rp ' . number_format($this->harga, 0, ',', '.');
+    }
+
+    public function getFormattedCatalogPrice(string $column = 'harga_retail'): string
+    {
+        $value = (float) ($this->{$column} ?: $this->harga);
+        return 'Rp ' . number_format($value, 0, ',', '.');
     }
 
     /**

@@ -13,17 +13,8 @@ class HomeController extends Controller
     // Halaman utama
     public function index(Request $request)
     {
-        // Produk unggulan grade A — hanya non-PBF
-        $featuredProducts = Medicine::where('stok', '>', 0)
-                                    ->whereRaw('UPPER(grade) = ?', ['A'])
-                                    ->nonPbf()
-                                    ->latest()
-                                    ->limit(20)
-                                    ->get();
-
         // Semua produk yang tersedia untuk section "Semua Produk"
-        $allProducts = Medicine::where('stok', '>', 0)
-                                ->nonPbf()
+        $allProducts = Medicine::nonPbf()
                                 ->orderBy('nama_obat')
                                 ->get();
 
@@ -44,7 +35,7 @@ class HomeController extends Controller
         // Promo produk aktif
         $promoProducts = Schema::hasTable('promo_products') ? PromoProduct::aktif()->get() : collect();
 
-        return view('home', compact('featuredProducts', 'allProducts', 'kategoryCounts', 'totalProducts', 'banners', 'promoProducts'));
+        return view('home', compact('allProducts', 'kategoryCounts', 'totalProducts', 'banners', 'promoProducts'));
     }
 
     // Halaman Tentang Kami

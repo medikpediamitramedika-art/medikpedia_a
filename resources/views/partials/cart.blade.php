@@ -110,13 +110,33 @@
     </div>
   </div>
   <div class="modal-form" id="orderFormPanel">
+    @if(empty($cartWholesaleOrder))
+    <div id="standardBuyerFields">
     <label class="form-lbl">Jenis Pembeli <span style="color:#ef4444;">*</span></label>
     <select id="f_jenis" class="form-inp" onchange="toggleBuyerType()">
       <option value="umum">Umum</option>
       <option value="apotik">Apotik</option>
-      <option value="pbf">PBF</option>
+      <option value="dokter">Dokter</option>
     </select>
-    <div id="buyerFieldsUmum">
+    </div>
+    @endif
+    <div id="pbfDestinationFields" style="display:none;">
+      <label class="form-lbl">Nama PBF <span style="color:#ef4444;">*</span></label>
+      <input id="f_pbf_name" type="text" class="form-inp" placeholder="Nama PBF tujuan">
+      <label class="form-lbl">Alamat PBF <span style="color:#ef4444;">*</span></label>
+      <textarea id="f_pbf_address" rows="2" class="form-inp" style="resize:vertical;" placeholder="Alamat PBF tujuan"></textarea>
+    </div>
+    <div id="signatoryFields" style="display:none;">
+      <label class="form-lbl">Nama Penandatangan <span style="color:#ef4444;">*</span></label>
+      <input id="f_signer_name" type="text" class="form-inp" value="Apt. Hendri Setiyono, S Farm" placeholder="Nama apoteker">
+      <label class="form-lbl">Jabatan <span style="color:#ef4444;">*</span></label>
+      <input id="f_signer_title" type="text" class="form-inp" value="Apoteker" placeholder="Apoteker">
+      <label class="form-lbl">No. SIA <span style="color:#ef4444;">*</span></label>
+      <input id="f_signer_sia" type="text" class="form-inp" value="13042600890450001" placeholder="Nomor SIA">
+      <label class="form-lbl">No. SIPA <span style="color:#ef4444;">*</span></label>
+      <input id="f_signer_sipa" type="text" class="form-inp" value="1/b.19/31.71.03.1007.4k-1.b/4/tm.09/e/2026" placeholder="Nomor SIPA">
+    </div>
+    <div id="buyerFieldsUmum" class="standard-buyer-fields" @if(!empty($cartWholesaleOrder)) style="display:none;" @endif>
       <label class="form-lbl">Nama Pemesan <span style="color:#ef4444;">*</span></label>
       <input id="f_nama" type="text" class="form-inp" placeholder="Nama lengkap">
       <label class="form-lbl">No. HP / WA <span style="color:#ef4444;">*</span></label>
@@ -128,38 +148,19 @@
         <div><label class="form-lbl">Kota / Kab</label><input id="f_kota" type="text" class="form-inp" placeholder="Kota / Kabupaten"></div>
       </div>
     </div>
-    <div id="buyerFieldsApotik" style="display:none;">
-      <label class="form-lbl">Nama Apotik <span style="color:#ef4444;">*</span></label>
-      <input id="f_nama_apotik" type="text" class="form-inp" placeholder="Nama apotik">
-      <label class="form-lbl">Nama Pemilik / Penanggung Jawab <span style="color:#ef4444;">*</span></label>
-      <input id="f_penanggung_jawab" type="text" class="form-inp" placeholder="Nama pemilik / penanggung jawab">
+    <div id="buyerFieldsApotik" class="standard-buyer-fields" @if(!empty($cartWholesaleOrder)) style="display:block;" @else style="display:none;" @endif>
+      <label class="form-lbl">Nama <span style="color:#ef4444;">*</span></label>
+      <input id="f_nama_apotik" type="text" class="form-inp" placeholder="Nama apotik / dokter">
+      <label class="form-lbl">Nama Pemesan <span style="color:#ef4444;">*</span></label>
+      <input id="f_penanggung_jawab" type="text" class="form-inp" placeholder="Nama pemesan">
+      <label class="form-lbl">Nama Outlet <span style="color:#ef4444;">*</span></label>
+      <input id="f_outlet" type="text" class="form-inp" placeholder="Nama outlet">
       <label class="form-lbl">No. HP / WA <span style="color:#ef4444;">*</span></label>
       <input id="f_hp_apotik" type="tel" class="form-inp" placeholder="08xxxxxxxxxx">
-      <label class="form-lbl">Alamat Apotik <span style="color:#ef4444;">*</span></label>
-      <textarea id="f_alamat_apotik" rows="3" class="form-inp" style="resize:vertical;" placeholder="Alamat lengkap apotik"></textarea>
-      <div class="form-row">
-        <div><label class="form-lbl">Kecamatan</label><input id="f_kec_apotik" type="text" class="form-inp" placeholder="Kecamatan"></div>
-        <div><label class="form-lbl">Kota / Kab</label><input id="f_kota_apotik" type="text" class="form-inp" placeholder="Kota / Kabupaten"></div>
-      </div>
-      <label class="form-lbl">Nomor SIA <span style="color:#ef4444;">*</span></label>
-      <input id="f_sia" type="text" class="form-inp" placeholder="Nomor SIA">
-      <label class="form-lbl">Nomor SIPA <span style="color:#ef4444;">*</span></label>
-      <input id="f_sipa" type="text" class="form-inp" placeholder="Nomor SIPA">
-    </div>
-    <div id="buyerFieldsPbf" style="display:none;">
-      <label class="form-lbl">Nama Pemesan <span style="color:#ef4444;">*</span></label>
-      <input id="f_nama_pbf" type="text" class="form-inp" placeholder="Nama pemesan">
-      <label class="form-lbl">No. Izin PBF <span style="color:#ef4444;">*</span></label>
-      <input id="f_no_izin_pbf" type="text" class="form-inp" placeholder="No. Izin PBF">
-      <label class="form-lbl">APJ <span style="color:#ef4444;">*</span></label>
-      <input id="f_apj" type="text" class="form-inp" placeholder="APJ">
-      <label class="form-lbl">No. NPWP <span style="color:#ef4444;">*</span></label>
-      <input id="f_npwp" type="text" class="form-inp" placeholder="No. NPWP">
       <label class="form-lbl">Alamat <span style="color:#ef4444;">*</span></label>
-      <textarea id="f_alamat_pbf" rows="3" class="form-inp" style="resize:vertical;" placeholder="Alamat lengkap"></textarea>
-      <label class="form-lbl">Nomor Tlp <span style="color:#ef4444;">*</span></label>
-      <input id="f_tlp_pbf" type="tel" class="form-inp" placeholder="Nomor telepon">
+      <textarea id="f_alamat_apotik" rows="3" class="form-inp" style="resize:vertical;" placeholder="Alamat lengkap apotik"></textarea>
     </div>
+    @if(empty($cartWholesaleOrder))
     <label class="form-lbl">Metode Pembayaran <span style="color:#ef4444;">*</span></label>
     <select id="f_payment" class="form-inp">
       <option value="">Pilih metode pembayaran</option>
@@ -171,6 +172,7 @@
       <option value="COD (Bayar di Tempat)">COD (Bayar di Tempat)</option>
       <option value="Tunai">Tunai</option>
     </select>
+    @endif
     <div class="form-error" id="formErr"></div>
     <button class="btn-submit-wa" onclick="submitOrder()">
       <i class="fa-solid fa-paper-plane"></i> Lanjutkan
@@ -178,9 +180,9 @@
   </div>
   <div class="modal-form" id="nextActionPanel" style="display:none;">
     <p style="color:#374151;font-size:0.9rem;margin-bottom:1rem;">Pesanan berhasil dicatat! Pilih tindakan selanjutnya:</p>
-    <button onclick="downloadReceiptAndClose()" style="width:100%;padding:0.75rem;background:#e3f2fd;color:#1565C0;border:1.5px solid #90caf9;border-radius:10px;font-weight:700;font-size:0.9rem;cursor:pointer;margin-bottom:0.75rem;display:flex;align-items:center;justify-content:center;gap:0.5rem;">
-      <i class="fa-solid fa-file-pdf"></i> Download Struk PDF
-    </button>
+    <a id="invoiceLink" href="#" target="_blank" rel="noopener" style="width:100%;padding:0.75rem;background:#e8f5e9;color:#187b35;border:1.5px solid #86d39a;border-radius:10px;font-weight:700;font-size:0.9rem;cursor:pointer;margin-bottom:0.75rem;display:flex;align-items:center;justify-content:center;gap:0.5rem;text-decoration:none;">
+      <i class="fa-solid fa-file-invoice"></i> Lihat Invoice
+    </a>
     <button onclick="openWhatsAppOrder()" style="width:100%;padding:0.75rem;background:#25D366;color:#fff;border:none;border-radius:10px;font-weight:700;font-size:0.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.5rem;">
       <i class="fa-brands fa-whatsapp" style="font-size:1.2rem;"></i> Chat WhatsApp
     </button>
@@ -402,10 +404,15 @@ function closeOrder() {
 }
 
 function toggleBuyerType() {
-  const type = document.getElementById('f_jenis').value;
+  const typeInput = document.getElementById('f_jenis');
+  if (!typeInput) return;
+  const type = typeInput.value;
   document.getElementById('buyerFieldsUmum').style.display   = type === 'umum'   ? '' : 'none';
-  document.getElementById('buyerFieldsApotik').style.display = type === 'apotik' ? '' : 'none';
-  document.getElementById('buyerFieldsPbf').style.display    = type === 'pbf'    ? '' : 'none';
+  document.getElementById('buyerFieldsApotik').style.display = ['apotik', 'dokter'].includes(type) ? '' : 'none';
+  const pbfFields = document.getElementById('pbfDestinationFields');
+  if (pbfFields) pbfFields.style.display = CART_CONFIG.adminPbfOrder ? '' : 'none';
+  const signatoryFields = document.getElementById('signatoryFields');
+  if (signatoryFields) signatoryFields.style.display = CART_CONFIG.adminPbfOrder ? '' : 'none';
 }
 
 function escapePdfText(text) {
@@ -583,7 +590,7 @@ function buildReceiptPdf(orderData) {
 }
 
 async function submitOrder() {
-  const jenis = document.getElementById('f_jenis').value;
+  const jenis = CART_CONFIG.adminPbfOrder || CART_CONFIG.wholesaleOrder ? 'apotik' : document.getElementById('f_jenis').value;
   const err = document.getElementById('formErr');
   err.style.display = 'none';
 
@@ -596,29 +603,36 @@ async function submitOrder() {
     original_total: originalTotal,
     discounted_total: discountedTotal,
     approval_status: 'pending',
-    payment_method: document.getElementById('f_payment').value.trim(),
+    payment_method: document.getElementById('f_payment')?.value.trim() || '',
   };
 
-  if (jenis === 'apotik') {
-    payload.buyer_name = document.getElementById('f_penanggung_jawab').value.trim() || document.getElementById('f_nama_apotik').value.trim();
+  if (CART_CONFIG.adminPbfOrder) {
+    payload.pbf_name = document.getElementById('f_pbf_name').value.trim();
+    payload.pbf_address = document.getElementById('f_pbf_address').value.trim();
+    if (!payload.pbf_name || !payload.pbf_address) {
+      err.textContent = 'Nama PBF dan alamat PBF wajib diisi.'; err.style.display = 'block'; return;
+    }
+  }
+
+  if (CART_CONFIG.adminPbfOrder) {
+    payload.buyer_name = 'Apotek Medikpedia';
+    payload.phone = '085890007359';
+    payload.address = 'ITC Cempaka Mas LT.1 No.88, Jakarta Pusat';
+    payload.requester_name = document.getElementById('f_signer_name').value.trim();
+    payload.apj = document.getElementById('f_signer_title').value.trim();
+    payload.sia = document.getElementById('f_signer_sia').value.trim();
+    payload.sipa = document.getElementById('f_signer_sipa').value.trim();
+    if (!payload.requester_name || !payload.apj || !payload.sia || !payload.sipa) {
+      err.textContent = 'Data penandatangan (nama, jabatan, SIA, dan SIPA) wajib diisi.'; err.style.display = 'block'; return;
+    }
+  } else if (CART_CONFIG.wholesaleOrder || jenis === 'apotik' || jenis === 'dokter') {
+    payload.buyer_name = document.getElementById('f_nama_apotik').value.trim();
+    payload.requester_name = document.getElementById('f_penanggung_jawab').value.trim();
+    payload.outlet_name = document.getElementById('f_outlet').value.trim();
     payload.phone    = document.getElementById('f_hp_apotik').value.trim();
     payload.address  = document.getElementById('f_alamat_apotik').value.trim();
-    payload.kecamatan = document.getElementById('f_kec_apotik').value.trim();
-    payload.kota     = document.getElementById('f_kota_apotik').value.trim();
-    payload.sia      = document.getElementById('f_sia').value.trim();
-    payload.sipa     = document.getElementById('f_sipa').value.trim();
-    if (!payload.buyer_name || !document.getElementById('f_nama_apotik').value.trim() || !payload.phone || !payload.address || !payload.sia || !payload.sipa) {
-      err.textContent = 'Semua field apotik wajib diisi.'; err.style.display = 'block'; return;
-    }
-  } else if (jenis === 'pbf') {
-    payload.buyer_name = document.getElementById('f_nama_pbf').value.trim();
-    payload.phone    = document.getElementById('f_tlp_pbf').value.trim();
-    payload.address  = document.getElementById('f_alamat_pbf').value.trim();
-    payload.no_izin_pbf = document.getElementById('f_no_izin_pbf').value.trim();
-    payload.apj      = document.getElementById('f_apj').value.trim();
-    payload.npwp     = document.getElementById('f_npwp').value.trim();
-    if (!payload.buyer_name || !payload.phone || !payload.address || !payload.no_izin_pbf || !payload.apj || !payload.npwp) {
-      err.textContent = 'Semua field PBF wajib diisi.'; err.style.display = 'block'; return;
+    if (!payload.buyer_name || !payload.requester_name || !payload.outlet_name || !payload.phone || !payload.address) {
+      err.textContent = 'Semua field nama, pemesan, outlet, alamat, dan nomor telepon wajib diisi.'; err.style.display = 'block'; return;
     }
   } else {
     payload.buyer_name = document.getElementById('f_nama').value.trim();
@@ -631,7 +645,7 @@ async function submitOrder() {
     }
   }
 
-  if (!payload.payment_method) {
+  if (!CART_CONFIG.wholesaleOrder && !payload.payment_method) {
     err.textContent = 'Metode pembayaran wajib diisi.'; err.style.display = 'block'; return;
   }
 
@@ -644,6 +658,9 @@ async function submitOrder() {
     if (!response.ok) { const e = await response.json(); throw (e.errors || new Error('Gagal menyimpan pesanan.')); }
     const result = await response.json();
     window.orderPayload = { ...payload, id: result.id, cartItems: cart };
+    document.getElementById('invoiceLink').href = CART_CONFIG.adminPurchaseOrderBase
+      ? CART_CONFIG.adminPurchaseOrderBase.replace('__ORDER__', result.id)
+      : result.invoice_url;
     document.getElementById('orderFormPanel').style.display = 'none';
     document.getElementById('nextActionPanel').style.display = 'block';
   } catch (error) {
@@ -675,11 +692,11 @@ function openWhatsAppOrder() {
     if (disc > 0) msg += `   Potongan: -${rp(disc)} → *${rp(afterDisc)}*\n`;
     if (it.note) msg += `   Catatan: ${it.note}\n`;
   });
-  msg += `---\n*Total: ${rp(total)}*\n\n*Data ${window.orderPayload?.buyer_type === 'apotik' ? 'Apotik' : 'Pemesan'}:*\n`;
-  if (window.orderPayload?.buyer_type === 'apotik') {
-    msg += `- Apotik: ${document.getElementById('f_nama_apotik').value.trim()}\n- Penanggung Jawab: ${window.orderPayload.buyer_name}\n- HP/WA: ${window.orderPayload.phone}\n- Alamat: ${window.orderPayload.address}\n- SIA: ${window.orderPayload.sia}\n- SIPA: ${window.orderPayload.sipa}\n`;
-  } else if (window.orderPayload?.buyer_type === 'pbf') {
-    msg += `- Nama Pemesan: ${window.orderPayload?.buyer_name}\n- No. Izin PBF: ${window.orderPayload?.no_izin_pbf || '-'}\n- APJ: ${window.orderPayload?.apj || '-'}\n- No. SIKA: ${window.orderPayload?.sika || '-'}\n- Alamat: ${window.orderPayload?.address || '-'}\n- Nomor Tlp: ${window.orderPayload?.phone || '-'}\n`;
+  msg += `---\n*Total: ${rp(total)}*\n\n*Data Pemesanan:*\n`;
+  if (CART_CONFIG.adminPbfOrder) {
+    msg += `- Pengirim: Apotek Medikpedia\n- Nama PBF: ${window.orderPayload?.pbf_name || '-'}\n- Alamat PBF: ${window.orderPayload?.pbf_address || '-'}\n`;
+  } else if (window.orderPayload?.buyer_type === 'apotik' || window.orderPayload?.buyer_type === 'dokter') {
+    msg += `- Nama: ${window.orderPayload.buyer_name}\n- Nama Pemesan: ${window.orderPayload.requester_name}\n- Nama Outlet: ${window.orderPayload.outlet_name}\n- HP/WA: ${window.orderPayload.phone}\n- Alamat: ${window.orderPayload.address}\n`;
   } else {
     msg += `- Nama: ${window.orderPayload?.buyer_name}\n- HP/WA: ${window.orderPayload?.phone}\n- Alamat: ${window.orderPayload?.address}\n`;
   }
@@ -691,6 +708,16 @@ function openWhatsAppOrder() {
 document.addEventListener('DOMContentLoaded', () => {
   syncBadge();
   toggleBuyerType();
+  if (CART_CONFIG.wholesaleOrder) {
+    const standardFields = document.getElementById('standardBuyerFields');
+    if (standardFields) standardFields.style.display = 'none';
+    document.getElementById('buyerFieldsUmum').style.display = 'none';
+    document.getElementById('buyerFieldsApotik').style.display = '';
+  }
+  if (CART_CONFIG.adminPbfOrder) {
+    document.getElementById('standardBuyerFields').style.display = 'none';
+    document.querySelectorAll('.standard-buyer-fields').forEach((field) => field.style.display = 'none');
+  }
   if (window.location.hash === '#keranjang') openCart();
   const navBtn = document.getElementById('cartNavBtn');
   if (navBtn) navBtn.onclick = () => openCart();

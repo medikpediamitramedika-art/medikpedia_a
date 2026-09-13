@@ -689,13 +689,6 @@
                                       <i class="fa-solid fa-cube"></i> <span>{{ $med->sediaan_label }}</span>
                                     </div>
                                 @endif
-                                @if($med->stok > 10)
-                                    <span class="product-stock stock-ok"><i class="fa-solid fa-check-circle"></i> Tersedia</span>
-                                @elseif($med->stok > 0)
-                                    <span class="product-stock stock-low"><i class="fa-solid fa-exclamation"></i> Sisa {{ $med->stok }}</span>
-                                @else
-                                    <span class="product-stock stock-out"><i class="fa-solid fa-times-circle"></i> Habis</span>
-                                @endif
                                 <div class="product-actions">
                                     <a href="{{ route('medicines.show', $med->id) }}" class="btn-detail">Lihat Detail</a>
                                     <button class="btn-add-cart" onclick="addToCart({{ $med->id }}, '{{ addslashes($med->nama_obat) }}', {{ $med->harga }}, '', '{{ addslashes($med->brand ?: $med->kategori) }}')">

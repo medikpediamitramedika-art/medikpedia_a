@@ -386,23 +386,6 @@
                     <div class="price">{{ $medicine->getFormattedPrice() }}</div>
                 </div>
 
-                <div class="stock-info">
-                    <div class="stock-item">
-                        <div class="stock-item-label">Stok Tersedia</div>
-                        <div class="stock-item-value">{{ $medicine->stok }}</div>
-                    </div>
-                    <div class="stock-item">
-                        <div class="stock-item-label">Status</div>
-                        <div class="stock-item-value" style="font-size:1rem;">
-                            @if($medicine->isAvailable())
-                                <span style="color:#1E88E5;"><i class="fa-solid fa-circle-check"></i> Tersedia</span>
-                            @else
-                                <span style="color:#ef4444;"><i class="fa-solid fa-circle-xmark"></i> Habis</span>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-
                 @if(!empty($medicine->sediaan))
                     <div style="margin-bottom:0.85rem;"><strong>Sediaan:</strong> <span style="color:#374151;">{{ $medicine->sediaan_label }}</span></div>
                 @endif
@@ -424,11 +407,10 @@
                         <label style="display:block;font-size:0.82rem;font-weight:600;color:#374151;margin-bottom:0.35rem;">Jumlah Pembelian</label>
                         <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
                             <button type="button" onclick="changeQty(-1)" style="width:34px;height:34px;border:1px solid #d1d5db;border-radius:8px;background:white;font-size:1rem;cursor:pointer;font-weight:700;color:#374151;flex-shrink:0;">-</button>
-                            <input type="number" id="qtyInput" value="1" min="1" max="{{ $medicine->stok }}"
+                            <input type="number" id="qtyInput" value="1" min="1" max="999999"
                                 style="width:64px;text-align:center;padding:0.35rem;border:1px solid #d1d5db;border-radius:8px;font-size:0.95rem;font-weight:700;"
                                 oninput="updateTotal()">
                             <button type="button" onclick="changeQty(1)" style="width:34px;height:34px;border:1px solid #d1d5db;border-radius:8px;background:white;font-size:1rem;cursor:pointer;font-weight:700;color:#374151;flex-shrink:0;">+</button>
-                            <span style="font-size:0.78rem;color:#9ca3af;">Stok: {{ $medicine->stok }}</span>
                         </div>
                     </div>
 
@@ -491,7 +473,7 @@
 @section('scripts')
 <script>
     const hargaSatuan = {{ $medicine->harga }};
-    const stokMax     = {{ $medicine->stok }};
+    const stokMax     = 999999;
     const namaObat    = @json($medicine->nama_obat);
     const kategori    = @json($medicine->kategori);
 
@@ -536,7 +518,7 @@
             'Jumlah     : ' + qty + ' pcs\n' +
             'Total      : ' + total + '\n\n' +
             'Alamat Pengiriman:\n' + alamat + '\n\n' +
-            'Mohon konfirmasi ketersediaan stok dan info pengiriman. Terima kasih!';
+            'Mohon konfirmasi info pengiriman. Terima kasih!';
 
         window.open('https://wa.me/6285890007359?text=' + encodeURIComponent(pesan), '_blank');
     }

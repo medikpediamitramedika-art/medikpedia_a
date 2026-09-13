@@ -1,6 +1,6 @@
 ﻿@extends('layouts.frontend')
 
-@section('title', 'Produk Apotek - Medikpedia')
+@section('title', ($catalogTitle ?? 'Belanja Grosir') . ' - Medikpedia')
 
 @section('styles')
 <style>
@@ -100,6 +100,7 @@
         font-size: 3rem; overflow: hidden;
     }
     .medicine-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+    .medicine-image img.product-placeholder-logo { width: 72%; height: 72%; object-fit: contain; }
     .medicine-card:hover .medicine-image img { transform: scale(1.05); }
     .medicine-body { padding: 1.1rem; flex: 1; display: flex; flex-direction: column; }
     .medicine-company {
@@ -309,10 +310,10 @@
         <div class="breadcrumb-custom">
             <a href="{{ route('home') }}"><i class="fa-solid fa-house"></i> Home</a>
             <span>/</span>
-            <span class="current">Produk Apotek</span>
+            <span class="current">{{ $catalogTitle ?? 'Belanja Grosir' }}</span>
         </div>
-        <h1><i class="fa-solid fa-store"></i> Katalog Produk Apotek</h1>
-        <p>{{ $total }} produk apotek tersedia dari berbagai perusahaan farmasi terpercaya</p>
+        <h1><i class="fa-solid fa-store"></i> {{ $catalogTitle ?? 'Belanja Grosir' }}</h1>
+        <p>{{ $total }} produk grosir tersedia dari berbagai perusahaan farmasi terpercaya</p>
     </div>
     <i class="fa-solid fa-pills header-deco-icon header-deco-icon-1"></i>
     <i class="fa-solid fa-capsules header-deco-icon header-deco-icon-2"></i>
@@ -385,7 +386,7 @@
                             @if($medicine->gambar)
                                 <img src="{{ url('storage/' . $medicine->gambar) }}" alt="{{ $medicine->nama_obat }}">
                             @else
-                                <i class="fa-solid fa-pills" style="color:#90caf9;font-size:3rem;"></i>
+                                <img class="product-placeholder-logo" src="{{ asset('logo1.png') }}" alt="Logo Medikpedia">
                             @endif
                         </div>
                         <div class="medicine-body">
@@ -393,27 +394,18 @@
                             <span class="medicine-company">{{ $medicine->kategori }}</span>
                             <h3 class="medicine-name">{{ $medicine->nama_obat }}</h3>
                             
-                            <div class="medicine-price">{{ $medicine->getFormattedPrice() }}</div>
+                            <div class="medicine-price">{{ $medicine->getFormattedCatalogPrice($catalogPrice ?? 'harga_grosir') }}</div>
                             @if($medicine->sediaan_label)
                                 <div class="medicine-meta" style="display:flex;align-items:center;gap:0.35rem;margin-bottom:0.6rem;">
                                     <i class="fa-solid fa-cube"></i> <span>Sediaan: {{ $medicine->sediaan_label }}</span>
                                 </div>
                             @endif
-                            @if($medicine->stok > 10)
-                                <span class="stock-badge stock-available"><i class="fa-solid fa-circle-check"></i> {{ $medicine->stok }} tersedia</span>
-                            @elseif($medicine->stok > 0)
-                                <span class="stock-badge stock-low"><i class="fa-solid fa-triangle-exclamation"></i> {{ $medicine->stok }} tersisa</span>
-                            @else
-                                <span class="stock-badge stock-out"><i class="fa-solid fa-circle-xmark"></i> Habis</span>
-                            @endif
                             <a href="{{ route('medicines.show', $medicine->id) }}" class="medicine-btn">
                                 Lihat Detail <i class="fa-solid fa-arrow-right"></i>
                             </a>
-                            @if($medicine->stok > 0)
-                            <button class="btn-cart" onclick="addToCart({{ $medicine->id }}, '{{ addslashes($medicine->nama_obat) }}', {{ $medicine->harga }}, '{{ $medicine->gambar ? url('storage/'.$medicine->gambar) : '' }}', '{{ addslashes($medicine->brand ?: $medicine->kategori) }}', this)">
+                            <button class="btn-cart" onclick="addToCart({{ $medicine->id }}, '{{ addslashes($medicine->nama_obat) }}', {{ $medicine->{$catalogPrice ?? 'harga_grosir'} ?: $medicine->harga }}, '{{ $medicine->gambar ? url('storage/'.$medicine->gambar) : '' }}', '{{ addslashes($medicine->brand ?: $medicine->kategori) }}', this)">
                                 <i class="fa-solid fa-cart-plus"></i> Tambah ke Keranjang
                             </button>
-                            @endif
                         </div>
                     </div>
                 @endforeach
@@ -469,5 +461,13 @@
 @endsection
 
 @section('scripts')
-@include('partials.cart')
+<script>window.cartSettings = { storageKey: 'medikpedia_cart_grosir', wholesaleOrder: true };</script>
+<script>
+window.addEventListener('pagehide', function () {
+    const body = new FormData();
+    body.append('_token', '{{ csrf_token() }}');
+    navigator.sendBeacon('{{ route('products.grosir.logout') }}', body);
+});
+</script>
+@include('partials.cart', ['cartWholesaleOrder' => true])
 @endsection

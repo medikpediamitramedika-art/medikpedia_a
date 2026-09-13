@@ -856,6 +856,7 @@
             <ul class="navbar-menu" id="navbarMenu">
                 <li><a href="{{ route('home') }}"><i class="fa-solid fa-house"></i> Home</a></li>
                 <li><a href="{{ route('products.index') }}"><i class="fa-solid fa-pills"></i> Produk Kami</a></li>
+                <li><a href="{{ route('products.grosir') }}"><i class="fa-solid fa-tags"></i> Belanja Grosir</a></li>
                 <li><a href="{{ route('about') }}"><i class="fa-solid fa-circle-info"></i> Tentang Kami</a></li>
                 <li><a href="{{ route('contact') }}"><i class="fa-solid fa-headset"></i> Hubungi Kami</a></li>
 
@@ -920,8 +921,10 @@
                     <p style="color:#d1d5db; line-height:1.8; margin-bottom:1.25rem;">Apotik online terpercaya dengan koleksi obat lengkap dan harga terjangkau.</p>
                     <div style="display:flex; gap:0.75rem;">
                         <a href="#" style="width:36px;height:36px;background:rgba(255,255,255,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='#1877f2'" onmouseout="this.style.background='rgba(255,255,255,0.1)'"><i class="fa-brands fa-facebook-f"></i></a>
-                        <a href="#" style="width:36px;height:36px;background:rgba(255,255,255,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='#e1306c'" onmouseout="this.style.background='rgba(255,255,255,0.1)'"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="https://www.instagram.com/apotek_medikpedia?igsi=MTVybm4xZmswYXg3Ng==" target="_blank" rel="noopener" style="width:36px;height:36px;background:rgba(255,255,255,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='#e1306c'" onmouseout="this.style.background='rgba(255,255,255,0.1)'"><i class="fa-brands fa-instagram"></i></a>
                         <a href="https://wa.me/6285890007359" style="width:36px;height:36px;background:rgba(255,255,255,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='#25d366'" onmouseout="this.style.background='rgba(255,255,255,0.1)'"><i class="fa-brands fa-whatsapp"></i></a>
+                        <a href="https://pin.it/69pbGoR2f" target="_blank" rel="noopener" style="width:36px;height:36px;background:rgba(255,255,255,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='#e60023'" onmouseout="this.style.background='rgba(255,255,255,0.1)'" title="Pinterest"><i class="fa-brands fa-pinterest-p"></i></a>
+                        <a href="https://youtube.com/@medikpedia?si=YqymYCniGs60plIl" target="_blank" rel="noopener" style="width:36px;height:36px;background:rgba(255,255,255,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='#ff0000'" onmouseout="this.style.background='rgba(255,255,255,0.1)'" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
                     </div>
                 </div>
                 <div>
@@ -1039,42 +1042,6 @@
                 <a href="https://dermilosofi.site" target="_blank" class="float-btn"
                    style="background:#fff;box-shadow:0 4px 16px rgba(0,0,0,0.2);overflow:hidden;">
                     <img src="{{ asset('logodermilosofi.site.jpeg') }}" alt="Dermilosofi" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
-                </a>
-            </div>
-            <!-- Tokopedia -->
-            <div class="float-item">
-                <span class="float-tooltip">Tokopedia</span>
-                <span class="float-label-mobile">Tokopedia</span>
-                <a href="https://tk.tokopedia.com/ZSHt4vosN/" target="_blank" class="float-btn"
-                   style="background:#42b549;box-shadow:0 4px 16px rgba(66,181,73,0.45);overflow:hidden;">
-                    <img src="{{ asset('logotokopedia.png') }}" alt="Tokopedia" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
-                </a>
-            </div>
-            <!-- Shopee -->
-            <div class="float-item">
-                <span class="float-tooltip">Shopee</span>
-                <span class="float-label-mobile">Shopee</span>
-                <a href="https://shopee.co.id/medikpedia.mitramedika" target="_blank" class="float-btn"
-                   style="background:#ee4d2d;box-shadow:0 4px 16px rgba(238,77,45,0.45);overflow:hidden;">
-                    <img src="{{ asset('logoshopee.jpeg') }}" alt="Shopee" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
-                </a>
-            </div>
-            <!-- TikTok -->
-            <div class="float-item">
-                <span class="float-tooltip">TikTok</span>
-                <span class="float-label-mobile">TikTok</span>
-                <a href="https://www.tiktok.com/@medikpedia" target="_blank" class="float-btn"
-                   style="background:#010101;color:white;font-size:1.4rem;box-shadow:0 4px 16px rgba(0,0,0,0.35);">
-                    <i class="fa-brands fa-tiktok"></i>
-                </a>
-            </div>
-            <!-- Instagram -->
-            <div class="float-item">
-                <span class="float-tooltip">Instagram</span>
-                <span class="float-label-mobile">Instagram</span>
-                <a href="https://instagram.com" target="_blank" class="float-btn"
-                   style="background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:white;font-size:1.4rem;box-shadow:0 4px 16px rgba(220,39,67,0.45);">
-                    <i class="fa-brands fa-instagram"></i>
                 </a>
             </div>
             <!-- WhatsApp -->

@@ -61,6 +61,54 @@ class ProductController extends Controller
         ));
     }
 
+    public function grosir(Request $request)
+    {
+        if (!$request->session()->get('grosir_access')) {
+            return view('products_grosir_gate');
+        }
+
+        $search = $request->get('search', '');
+        $kategori_produk = $request->get('kategori_produk', '');
+        $query = Medicine::nonPbf()->where('harga_grosir', '>', 0);
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_obat', 'like', "%{$search}%")
+                    ->orWhere('kategori', 'like', "%{$search}%")
+                    ->orWhere('deskripsi', 'like', "%{$search}%");
+            });
+        }
+        if ($kategori_produk) $query->where('kategori_produk', $kategori_produk);
+        $medicines = $query->latest()->paginate(12)->withQueryString();
+        return view('products_apotek', [
+            'medicines' => $medicines,
+            'search' => $search,
+            'kategori_produk' => $kategori_produk,
+            'perusahaan' => '',
+            'sort' => 'terbaru',
+            'total' => Medicine::nonPbf()->where('harga_grosir', '>', 0)->count(),
+            'kategoriOptions' => Companies::LIST,
+            'perusahaanList' => collect(),
+            'catalogPrice' => 'harga_grosir',
+            'catalogTitle' => 'Belanja Grosir',
+        ]);
+    }
+
+    public function grosirVerify(Request $request)
+    {
+        $kode = strtoupper(trim($request->input('kode', '')));
+        if (in_array($kode, self::PBF_ACCESS_CODES, true)) {
+            $request->session()->put('grosir_access', true);
+            return redirect()->route('products.grosir');
+        }
+        return redirect()->route('products.grosir')->withErrors(['kode' => 'Kode akses grosir tidak valid.'])->withInput();
+    }
+
+    public function grosirLogout(Request $request)
+    {
+        $request->session()->forget('grosir_access');
+        return response()->json(['success' => true]);
+    }
+
     public function update(Request $request, $id)
     {
         $medicine = Medicine::findOrFail($id);
@@ -86,20 +134,19 @@ class ProductController extends Controller
     }
 
     /**
-     * Kode akses PBF — 10 kode akses (PBF1000 sampai PBF1010)
+     * Kode akses katalog — medikpedia1 sampai medikpedia10.
      */
     const PBF_ACCESS_CODES = [
-        'PBF1000',
-        'PBF1001',
-        'PBF1002',
-        'PBF1003',
-        'PBF1004',
-        'PBF1005',
-        'PBF1006',
-        'PBF1007',
-        'PBF1008',
-        'PBF1009',
-        'PBF1010',
+        'MEDIKPEDIA1',
+        'MEDIKPEDIA2',
+        'MEDIKPEDIA3',
+        'MEDIKPEDIA4',
+        'MEDIKPEDIA5',
+        'MEDIKPEDIA6',
+        'MEDIKPEDIA7',
+        'MEDIKPEDIA8',
+        'MEDIKPEDIA9',
+        'MEDIKPEDIA10',
     ];
 
     /**
@@ -156,7 +203,7 @@ class ProductController extends Controller
         return view('products_pbf', compact(
             'medicines', 'search', 'kategori_produk', 'perusahaan',
             'sort', 'total', 'kategoriOptions', 'perusahaanList'
-        ));
+        ))->with('catalogPrice', 'harga_modal');
     }
 
     /**
