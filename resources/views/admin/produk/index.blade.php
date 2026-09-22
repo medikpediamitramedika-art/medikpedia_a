@@ -62,6 +62,10 @@
     .stock-low   { background:#fef3c7; color:#92400e; }
     .stock-empty { background:#fee2e2; color:#991b1b; }
     .price-text  { font-weight:600; color:#1E88E5; }
+    .inline-number { width:92px; padding:0.35rem 0.45rem; border:1px solid #dbe3ef; border-radius:0.4rem; color:#1E88E5; font-size:0.82rem; font-weight:600; background:#fff; }
+    .inline-number:focus { outline:none; border-color:#1E88E5; box-shadow:0 0 0 3px rgba(30,136,229,0.1); }
+    .inline-save { display:inline-flex; align-items:center; gap:0.3rem; margin-top:0.35rem; padding:0.3rem 0.55rem; border:0; border-radius:0.4rem; background:#e8f5e9; color:#2e7d32; font-size:0.72rem; font-weight:700; cursor:pointer; }
+    .inline-save:hover { background:#2e7d32; color:#fff; }
 
     .action-wrap { display:flex; gap:0.4rem; }
     .btn-edit, .btn-del { display:inline-flex; align-items:center; gap:0.3rem; padding:0.35rem 0.75rem; border-radius:0.4rem; font-size:0.78rem; font-weight:600; text-decoration:none; border:none; cursor:pointer; transition:all 0.2s; }
@@ -123,9 +127,6 @@
     <div class="page-header-actions">
         <a href="{{ route('admin.produk.import') }}" class="btn-icon btn-icon-outline">
             <i class="fa-solid fa-file-import"></i> Import Excel
-        </a>
-        <a href="{{ route('admin.produk.export', request()->only('mode')) }}" class="btn-icon btn-icon-outline">
-            <i class="fa-solid fa-file-export"></i> Export Excel
         </a>
         <a href="{{ route('admin.produk.create') }}" class="btn-icon btn-icon-primary">
             <i class="fa-solid fa-plus"></i> Tambah Produk
@@ -214,11 +215,9 @@
                     <th style="width:140px;">Foto</th>
                     <th>Nama Produk</th>
                     <th>Sediaan</th>
-                    <th>Kelompok</th>
                     <th>Kategori</th>
                     <th>Pabrik/Merek</th>
                     <th>Modal</th>
-                    <th>Grosir</th>
                     <th>Retail</th>
                     <th>Stok</th>
                     <th>Ditambahkan</th>
@@ -251,15 +250,6 @@
                         @endif
                     </td>
                     <td>
-                        @if($medicine->kelompok === 'PBF')
-                            <span style="display:inline-block;padding:0.25rem 0.6rem;background:#fef3c7;color:#92400e;border-radius:4px;font-size:0.75rem;font-weight:700;">PBF</span>
-                        @elseif($medicine->kelompok === 'APOTEK')
-                            <span style="display:inline-block;padding:0.25rem 0.6rem;background:#d1fae5;color:#065f46;border-radius:4px;font-size:0.75rem;font-weight:700;">APOTEK</span>
-                        @else
-                            <span style="font-size:0.75rem;color:#9ca3af;">-</span>
-                        @endif
-                    </td>
-                    <td>
                         @php
                             $cls = match($medicine->kategori_produk) {
                                 'SKINCARE & KOSMETIK' => 'kat-skincare',
@@ -270,17 +260,14 @@
                         <span class="kat-badge {{ $cls }}">{{ $medicine->kategori_produk }}</span>
                     </td>
                     <td><span style="font-size:0.82rem;color:#6b7280;">{{ $medicine->kategori }}</span></td>
-                    <td><span class="price-text">{{ $medicine->getFormattedCatalogPrice('harga_modal') }}</span></td>
-                    <td><span class="price-text">{{ $medicine->getFormattedCatalogPrice('harga_grosir') }}</span></td>
-                    <td><span class="price-text">{{ $medicine->getFormattedCatalogPrice('harga_retail') }}</span></td>
                     <td>
-                        @if($medicine->stok > 10)
-                            <span class="stock-badge stock-ok">{{ $medicine->stok }}</span>
-                        @elseif($medicine->stok > 0)
-                            <span class="stock-badge stock-low">{{ $medicine->stok }}</span>
-                        @else
-                            <span class="stock-badge stock-empty">Habis</span>
-                        @endif
+                        <input class="inline-number" type="number" name="harga_modal" form="inline-update-{{ $medicine->id }}" value="{{ $medicine->harga_modal ?: $medicine->harga }}" min="0" step="0.01" aria-label="Harga modal {{ $medicine->nama_obat }}">
+                    </td>
+                    <td>
+                        <input class="inline-number" type="number" name="harga_retail" form="inline-update-{{ $medicine->id }}" value="{{ $medicine->harga_retail ?: $medicine->harga }}" min="0" step="0.01" aria-label="Harga retail {{ $medicine->nama_obat }}">
+                    </td>
+                    <td>
+                        <input class="inline-number" type="number" name="stok" form="inline-update-{{ $medicine->id }}" value="{{ $medicine->stok }}" min="0" step="1" aria-label="Stok {{ $medicine->nama_obat }}">
                     </td>
                     <td style="font-size:0.82rem;color:#9ca3af;">{{ $medicine->created_at->format('d M Y') }}</td>
                     <td>
@@ -291,6 +278,9 @@
                             <button type="button" class="btn-del"
                                 onclick="confirmDelete({{ $medicine->id }}, '{{ addslashes($medicine->nama_obat) }}')">
                                 <i class="fa-solid fa-trash"></i> Hapus
+                            </button>
+                            <button type="submit" class="inline-save" form="inline-update-{{ $medicine->id }}">
+                                <i class="fa-solid fa-floppy-disk"></i> Simpan
                             </button>
                         </div>
                     </td>
@@ -372,6 +362,12 @@
     <input type="hidden" name="pabrik" value="{{ $pabrik }}">
     <input type="hidden" name="page" value="{{ request('page', 1) }}">
 </form>
+
+@foreach($medicines as $medicine)
+    <form id="inline-update-{{ $medicine->id }}" method="POST" action="{{ route('admin.produk.update-inline', $medicine->id) }}" style="display:none;">
+        @csrf
+    </form>
+@endforeach
 
 <script>
 const deleteRoutes = {

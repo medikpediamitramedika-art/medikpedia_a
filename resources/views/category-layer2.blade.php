@@ -567,6 +567,11 @@
 </style>
 @endsection
 
+@section('scripts')
+<script>window.cartSettings = { storageKey: 'medikpedia_cart_retail' };</script>
+@include('partials.cart')
+@endsection
+
 @section('content')
 
 {{-- PAGE HEADER --}}
@@ -684,6 +689,11 @@
                                 <h3 class="product-name">{{ $med->nama_obat }}</h3>
                                 
                                 <div class="product-price">{{ $med->getFormattedPrice() }}</div>
+                                @php $stock = (int) $med->stok; @endphp
+                                <span class="product-stock {{ $stock <= 0 ? 'empty' : ($stock <= 10 ? 'low' : 'available') }}">
+                                    <i class="fa-solid {{ $stock <= 0 ? 'fa-circle-xmark' : 'fa-boxes-stacked' }}"></i>
+                                    {{ $stock > 0 ? 'Stok: ' . number_format($stock, 0, ',', '.') : 'Stok habis' }}
+                                </span>
                                 @if($med->sediaan_label)
                                     <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.35rem;display:flex;align-items:center;gap:0.35rem;">
                                       <i class="fa-solid fa-cube"></i> <span>{{ $med->sediaan_label }}</span>

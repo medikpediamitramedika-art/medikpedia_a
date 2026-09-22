@@ -61,54 +61,6 @@ class ProductController extends Controller
         ));
     }
 
-    public function grosir(Request $request)
-    {
-        if (!$request->session()->get('grosir_access')) {
-            return view('products_grosir_gate');
-        }
-
-        $search = $request->get('search', '');
-        $kategori_produk = $request->get('kategori_produk', '');
-        $query = Medicine::nonPbf()->where('harga_grosir', '>', 0);
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('nama_obat', 'like', "%{$search}%")
-                    ->orWhere('kategori', 'like', "%{$search}%")
-                    ->orWhere('deskripsi', 'like', "%{$search}%");
-            });
-        }
-        if ($kategori_produk) $query->where('kategori_produk', $kategori_produk);
-        $medicines = $query->latest()->paginate(12)->withQueryString();
-        return view('products_apotek', [
-            'medicines' => $medicines,
-            'search' => $search,
-            'kategori_produk' => $kategori_produk,
-            'perusahaan' => '',
-            'sort' => 'terbaru',
-            'total' => Medicine::nonPbf()->where('harga_grosir', '>', 0)->count(),
-            'kategoriOptions' => Companies::LIST,
-            'perusahaanList' => collect(),
-            'catalogPrice' => 'harga_grosir',
-            'catalogTitle' => 'Belanja Grosir',
-        ]);
-    }
-
-    public function grosirVerify(Request $request)
-    {
-        $kode = strtoupper(trim($request->input('kode', '')));
-        if (in_array($kode, self::PBF_ACCESS_CODES, true)) {
-            $request->session()->put('grosir_access', true);
-            return redirect()->route('products.grosir');
-        }
-        return redirect()->route('products.grosir')->withErrors(['kode' => 'Kode akses grosir tidak valid.'])->withInput();
-    }
-
-    public function grosirLogout(Request $request)
-    {
-        $request->session()->forget('grosir_access');
-        return response()->json(['success' => true]);
-    }
-
     public function update(Request $request, $id)
     {
         $medicine = Medicine::findOrFail($id);

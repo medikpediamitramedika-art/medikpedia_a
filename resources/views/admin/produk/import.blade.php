@@ -47,13 +47,13 @@
     <ol>
         <li>Download Template Excel (.xlsx) di bawah</li>
         <li>Isi data produk sesuai kolom yang tersedia</li>
-        <li>Isi tiga harga pada kolom <strong>MODAL</strong>, <strong>HARGA GROSIR</strong>, dan <strong>HARGA RETAIL</strong></li>
+        <li>Isi stok pada kolom <strong>STOK</strong> dan harga pada kolom <strong>MODAL</strong> dan <strong>HARGA RETAIL</strong></li>
         <li>Upload file <strong>.csv</strong>, <strong>.xls</strong>, atau <strong>.xlsx</strong></li>
         <li>Data yang sudah ada (SKU atau nama produk sama) akan diperbarui, data baru akan ditambahkan</li>
         <li>Struktur file tidak harus persis sama; selama header yang dikenali ada, data tetap bisa dimasukkan</li>
     </ol>
     <p style="color:#059669;margin:0.75rem 0 0;font-size:0.875rem;font-weight:600;">
-        ✅ Format: <strong>NO | PRINCIPLE | NAMA PRODUK | LOGO | RESEP | KOMPOSISI | SATUAN | MODAL | HARGA GROSIR | HARGA RETAIL</strong>
+        ✅ Format: <strong>NO | PRINCIPLE | NAMA PRODUK | LOGO | RESEP | KOMPOSISI | SATUAN | STOK | MODAL | HARGA RETAIL</strong>
     </p>
 </div>
 
@@ -80,8 +80,8 @@
                         <th>RESEP</th>
                         <th>KOMPOSISI</th>
                         <th>SATUAN</th>
+                        <th>STOK</th>
                         <th>MODAL</th>
-                        <th>HARGA GROSIR</th>
                         <th>HARGA RETAIL</th>
                     </tr>
                 </thead>
@@ -93,7 +93,7 @@
                         <td></td>
                         <td>BEBAS</td>
                         <td>Paracetamol 500 mg</td>
-                        <td>fls</td><td>4000</td><td>4500</td><td>5000</td>
+                        <td>fls</td><td>100</td><td>4000</td><td>5000</td>
                     </tr>
                     <tr>
                         <td>2</td>
@@ -102,7 +102,7 @@
                         <td></td>
                         <td>BEBAS</td>
                         <td>Aqua, Glycerin, SPF30</td>
-                        <td>box</td><td>70000</td><td>78000</td><td>85000</td>
+                        <td>box</td><td>80</td><td>70000</td><td>85000</td>
                     </tr>
                     <tr>
                         <td>3</td>
@@ -111,7 +111,7 @@
                         <td></td>
                         <td>BEBAS</td>
                         <td>-</td>
-                        <td>pcs</td><td>300000</td><td>325000</td><td>350000</td>
+                        <td>pcs</td><td>20</td><td>300000</td><td>350000</td>
                     </tr>
                 </tbody>
             </table>

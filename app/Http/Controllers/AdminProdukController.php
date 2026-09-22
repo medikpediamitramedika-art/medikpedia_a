@@ -77,14 +77,14 @@ class AdminProdukController extends Controller
     {
         $products = Medicine::when($request->get('mode') === 'pbf', fn ($query) => $query->where('harga_modal', '>', 0))
             ->orderBy('nama_obat')->get();
-        $columns = ['NO', 'PRINCIPLE', 'NAMA PRODUK', 'LOGO', 'RESEP', 'KOMPOSISI', 'SATUAN', 'MODAL', 'HARGA GROSIR', 'HARGA RETAIL'];
+        $columns = ['NO', 'PRINCIPLE', 'NAMA PRODUK', 'LOGO', 'RESEP', 'KOMPOSISI', 'SATUAN', 'MODAL', 'HARGA RETAIL'];
         $rows = $products->values()->map(fn ($product, $index) => [
             $index + 1, $product->brand ?: $product->kategori, $product->nama_obat, $product->gambar ?: '',
             $product->grade ?: 'BEBAS', $product->komposisi ?: '', $product->sediaan ?: '',
-            $product->harga_modal, $product->harga_grosir, $product->harga_retail ?: $product->harga,
+            $product->harga_modal, $product->harga_retail ?: $product->harga,
         ])->all();
 
-        return \App\Helpers\XlsxWriter::download('produk_tanpa_stok.xlsx', $columns, $rows, [8, 25, 30, 18, 12, 30, 12, 15, 18, 18]);
+        return \App\Helpers\XlsxWriter::download('produk_tanpa_stok.xlsx', $columns, $rows, [8, 25, 30, 18, 12, 30, 12, 15, 18]);
     }
 
     public function create()
@@ -108,7 +108,6 @@ class AdminProdukController extends Controller
             'grade'           => ['nullable', 'string'],
             'harga'           => ['required', 'numeric', 'min:0'],
             'harga_modal'     => ['nullable', 'numeric', 'min:0'],
-            'harga_grosir'    => ['nullable', 'numeric', 'min:0'],
             'harga_retail'    => ['nullable', 'numeric', 'min:0'],
             'stok'            => ['required', 'integer', 'min:0'],
             'sediaan'         => ['nullable', 'string', 'max:255'],
@@ -156,7 +155,6 @@ class AdminProdukController extends Controller
             'grade'           => ['nullable', 'string'],
             'harga'           => ['required', 'numeric', 'min:0'],
             'harga_modal'     => ['nullable', 'numeric', 'min:0'],
-            'harga_grosir'    => ['nullable', 'numeric', 'min:0'],
             'harga_retail'    => ['nullable', 'numeric', 'min:0'],
             'stok'            => ['required', 'integer', 'min:0'],
             'sediaan'         => ['nullable', 'string', 'max:255'],
@@ -250,6 +248,19 @@ class AdminProdukController extends Controller
         $validated = $request->validate(['stok' => ['required', 'integer', 'min:0']]);
         $produk->update(['stok' => $validated['stok']]);
         return back()->with('success', 'Stok berhasil diupdate!');
+    }
+
+    public function updateInline(Request $request, Medicine $produk)
+    {
+        $validated = $request->validate([
+            'harga_modal'  => ['required', 'numeric', 'min:0'],
+            'harga_retail' => ['required', 'numeric', 'min:0'],
+            'stok'         => ['required', 'integer', 'min:0'],
+        ]);
+
+        $produk->update($validated);
+
+        return back()->with('success', 'Harga dan stok berhasil diupdate!');
     }
 
     public function show(Medicine $produk)

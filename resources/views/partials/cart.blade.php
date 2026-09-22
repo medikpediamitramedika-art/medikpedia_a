@@ -149,8 +149,6 @@
       </div>
     </div>
     <div id="buyerFieldsApotik" class="standard-buyer-fields" @if(!empty($cartWholesaleOrder)) style="display:block;" @else style="display:none;" @endif>
-      <label class="form-lbl">Nama <span style="color:#ef4444;">*</span></label>
-      <input id="f_nama_apotik" type="text" class="form-inp" placeholder="Nama apotik / dokter">
       <label class="form-lbl">Nama Pemesan <span style="color:#ef4444;">*</span></label>
       <input id="f_penanggung_jawab" type="text" class="form-inp" placeholder="Nama pemesan">
       <label class="form-lbl">Nama Outlet <span style="color:#ef4444;">*</span></label>
@@ -162,7 +160,7 @@
     </div>
     @if(empty($cartWholesaleOrder))
     <label class="form-lbl">Metode Pembayaran <span style="color:#ef4444;">*</span></label>
-    <select id="f_payment" class="form-inp">
+    <select id="f_payment" class="form-inp" onchange="toggleTempoFields()">
       <option value="">Pilih metode pembayaran</option>
       <option value="Transfer Bank BCA">Transfer Bank BCA</option>
       <option value="Transfer Bank BRI">Transfer Bank BRI</option>
@@ -171,7 +169,12 @@
       <option value="QRIS">QRIS</option>
       <option value="COD (Bayar di Tempat)">COD (Bayar di Tempat)</option>
       <option value="Tunai">Tunai</option>
+      <option value="Tempo">Tempo</option>
     </select>
+    <div id="tempoFields" style="display:none;">
+      <label class="form-lbl">Jumlah Hari Tempo <span style="color:#ef4444;">*</span></label>
+      <input id="f_payment_term_days" type="number" min="1" step="1" class="form-inp" placeholder="Contoh: 14">
+    </div>
     @endif
     <div class="form-error" id="formErr"></div>
     <button class="btn-submit-wa" onclick="submitOrder()">
@@ -191,7 +194,7 @@
 
 {{-- ===== CART JAVASCRIPT ===== --}}
 <script>
-// Satu keranjang untuk semua halaman - key default: medikpedia_cart
+// Keranjang disimpan per konteks halaman melalui CART_CONFIG.storageKey.
 const WA = '6285890007359';
 const CART_DEFAULT_SETTINGS = {
   storageKey: 'medikpedia_cart',
@@ -413,6 +416,21 @@ function toggleBuyerType() {
   if (pbfFields) pbfFields.style.display = CART_CONFIG.adminPbfOrder ? '' : 'none';
   const signatoryFields = document.getElementById('signatoryFields');
   if (signatoryFields) signatoryFields.style.display = CART_CONFIG.adminPbfOrder ? '' : 'none';
+  toggleTempoFields();
+}
+
+function toggleTempoFields() {
+  const paymentSelect = document.getElementById('f_payment');
+  const tempoFields = document.getElementById('tempoFields');
+  if (!paymentSelect || !tempoFields) return;
+  const typeInput = document.getElementById('f_jenis');
+  const buyerType = typeInput ? typeInput.value : (CART_CONFIG.wholesaleOrder || CART_CONFIG.adminPbfOrder ? 'apotik' : 'umum');
+  const isTempo = paymentSelect.value === 'Tempo';
+  const allowTempo = ['apotik', 'dokter'].includes(buyerType);
+  tempoFields.style.display = isTempo && allowTempo ? '' : 'none';
+  if (!allowTempo && isTempo) {
+    paymentSelect.value = '';
+  }
 }
 
 function escapePdfText(text) {
@@ -579,8 +597,11 @@ function buildReceiptPdf(orderData) {
   doc.text(rp(total), rightX, y, { align: 'right' }); y += 36;
   drawLine();
   if (orderData.payment_method) {
+    const paymentLabel = orderData.payment_method === 'Tempo' && orderData.payment_term_days
+      ? `Tempo (${orderData.payment_term_days} hari)`
+      : orderData.payment_method;
     doc.setFont('helvetica', 'normal'); doc.setFontSize(8);
-    line(`Pembayaran  : ${orderData.payment_method}`, { spacing: 13 });
+    line(`Pembayaran  : ${paymentLabel}`, { spacing: 13 });
     drawLine();
   }
   doc.setFont('helvetica', 'normal'); doc.setFontSize(8);
@@ -596,6 +617,8 @@ async function submitOrder() {
 
   const originalTotal = cart.reduce((s, it) => s + (it.price * it.qty), 0);
   const discountedTotal = cart.reduce((s, it) => s + (it.price * it.qty) - (it.discount || 0), 0);
+  const paymentMethod = document.getElementById('f_payment')?.value.trim() || '';
+  const paymentTermDays = Number(document.getElementById('f_payment_term_days')?.value || 0);
   const payload = {
     buyer_type: jenis,
     items: cart.map(it => ({ id: it.id, nama_obat: it.name, quantity: it.qty, harga: it.price, catatan: it.note || '', potongan: it.discount || 0 })),
@@ -603,7 +626,8 @@ async function submitOrder() {
     original_total: originalTotal,
     discounted_total: discountedTotal,
     approval_status: 'pending',
-    payment_method: document.getElementById('f_payment')?.value.trim() || '',
+    payment_method: paymentMethod,
+    payment_term_days: paymentMethod === 'Tempo' ? paymentTermDays : null,
   };
 
   if (CART_CONFIG.adminPbfOrder) {
@@ -626,13 +650,13 @@ async function submitOrder() {
       err.textContent = 'Data penandatangan (nama, jabatan, SIA, dan SIPA) wajib diisi.'; err.style.display = 'block'; return;
     }
   } else if (CART_CONFIG.wholesaleOrder || jenis === 'apotik' || jenis === 'dokter') {
-    payload.buyer_name = document.getElementById('f_nama_apotik').value.trim();
     payload.requester_name = document.getElementById('f_penanggung_jawab').value.trim();
     payload.outlet_name = document.getElementById('f_outlet').value.trim();
+    payload.buyer_name = payload.requester_name;
     payload.phone    = document.getElementById('f_hp_apotik').value.trim();
     payload.address  = document.getElementById('f_alamat_apotik').value.trim();
-    if (!payload.buyer_name || !payload.requester_name || !payload.outlet_name || !payload.phone || !payload.address) {
-      err.textContent = 'Semua field nama, pemesan, outlet, alamat, dan nomor telepon wajib diisi.'; err.style.display = 'block'; return;
+    if (!payload.requester_name || !payload.outlet_name || !payload.phone || !payload.address) {
+      err.textContent = 'Nama pemesan, nama outlet, alamat, dan nomor telepon wajib diisi.'; err.style.display = 'block'; return;
     }
   } else {
     payload.buyer_name = document.getElementById('f_nama').value.trim();
@@ -647,6 +671,16 @@ async function submitOrder() {
 
   if (!CART_CONFIG.wholesaleOrder && !payload.payment_method) {
     err.textContent = 'Metode pembayaran wajib diisi.'; err.style.display = 'block'; return;
+  }
+
+  if (payload.payment_method === 'Tempo') {
+    const allowTempo = ['apotik', 'dokter'].includes(jenis);
+    if (!allowTempo) {
+      err.textContent = 'Metode Tempo hanya tersedia untuk pembeli Apotik dan Dokter.'; err.style.display = 'block'; return;
+    }
+    if (!Number.isInteger(payload.payment_term_days) || payload.payment_term_days < 1) {
+      err.textContent = 'Jumlah hari tempo wajib diisi untuk metode Tempo.'; err.style.display = 'block'; return;
+    }
   }
 
   try {
@@ -700,7 +734,12 @@ function openWhatsAppOrder() {
   } else {
     msg += `- Nama: ${window.orderPayload?.buyer_name}\n- HP/WA: ${window.orderPayload?.phone}\n- Alamat: ${window.orderPayload?.address}\n`;
   }
-  if (window.orderPayload?.payment_method) msg += `*Metode Pembayaran: ${window.orderPayload.payment_method}*\n`;
+  if (window.orderPayload?.payment_method) {
+    const paymentLabel = window.orderPayload.payment_method === 'Tempo' && window.orderPayload.payment_term_days
+      ? `Tempo (${window.orderPayload.payment_term_days} hari)`
+      : window.orderPayload.payment_method;
+    msg += `*Metode Pembayaran: ${paymentLabel}*\n`;
+  }
   msg += '\nTerima kasih';
   window.open(`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`, '_blank');
 }

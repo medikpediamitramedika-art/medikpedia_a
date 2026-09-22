@@ -206,6 +206,21 @@
             border-radius: 50%; pointer-events: none;
         }
 
+        .product-stock {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            width: fit-content;
+            padding: 0.2rem 0.6rem;
+            margin-bottom: 0.6rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .product-stock.available { background: #d1fae5; color: #065f46; }
+        .product-stock.low { background: #fef3c7; color: #92400e; }
+        .product-stock.empty { background: #fee2e2; color: #991b1b; }
+
         /* ===== CARD DECORATIONS ===== */
         .medicine-card, .news-card, .news-preview-card, .photo-card,
         .feature-item, .section-card, .vm-card, .value-item,
@@ -856,7 +871,6 @@
             <ul class="navbar-menu" id="navbarMenu">
                 <li><a href="{{ route('home') }}"><i class="fa-solid fa-house"></i> Home</a></li>
                 <li><a href="{{ route('products.index') }}"><i class="fa-solid fa-pills"></i> Produk Kami</a></li>
-                <li><a href="{{ route('products.grosir') }}"><i class="fa-solid fa-tags"></i> Belanja Grosir</a></li>
                 <li><a href="{{ route('about') }}"><i class="fa-solid fa-circle-info"></i> Tentang Kami</a></li>
                 <li><a href="{{ route('contact') }}"><i class="fa-solid fa-headset"></i> Hubungi Kami</a></li>
 
@@ -1222,22 +1236,6 @@
     <script>
         // Cart badge sync - gunakan key khusus jika halaman mendefinisikan cartSettings
         (function() {
-            // Migrasi sekali: jika ada key lama retail/grosir, gabungkan ke key utama
-            ['medikpedia_cart_retail', 'medikpedia_cart_grosir'].forEach(function(oldKey) {
-                try {
-                    const oldData = JSON.parse(localStorage.getItem(oldKey) || '[]');
-                    if (oldData.length) {
-                        let current = JSON.parse(localStorage.getItem('medikpedia_cart') || '[]');
-                        oldData.forEach(function(item) {
-                            const ex = current.find(function(i) { return i.id === item.id; });
-                            if (ex) ex.qty += item.qty; else current.push(item);
-                        });
-                        localStorage.setItem('medikpedia_cart', JSON.stringify(current));
-                        localStorage.removeItem(oldKey);
-                    }
-                } catch(e) {}
-            });
-
             const storageKey = (window.cartSettings && window.cartSettings.storageKey) ? window.cartSettings.storageKey : 'medikpedia_cart';
             const cart = JSON.parse(localStorage.getItem(storageKey) || '[]');
             const total = cart.reduce(function(s, i) { return s + i.qty; }, 0);

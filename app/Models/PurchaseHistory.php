@@ -28,6 +28,7 @@ class PurchaseHistory extends Model
         'discounted_total',
         'approval_status',
         'payment_method',
+        'payment_term_days',
     ];
 
     protected $casts = [
@@ -35,6 +36,7 @@ class PurchaseHistory extends Model
         'total' => 'integer',
         'original_total' => 'integer',
         'discounted_total' => 'integer',
+        'payment_term_days' => 'integer',
     ];
 
     protected $appends = ['effective_total', 'approval_label'];

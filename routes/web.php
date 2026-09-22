@@ -43,10 +43,7 @@ Route::get('/products/{id}', [ProductController::class, 'show'])->name('products
 Route::get('/products-pbf', [ProductController::class, 'pbf'])->name('products.pbf');
 Route::post('/products-pbf/verify', [ProductController::class, 'pbfVerify'])->name('products.pbf.verify');
 Route::post('/products-pbf/logout', [ProductController::class, 'pbfLogout'])->name('products.pbf.logout');
-Route::get('/products-apotek', [ProductController::class, 'grosir'])->name('products.apotek');
-Route::get('/belanja-grosir', [ProductController::class, 'grosir'])->name('products.grosir');
-Route::post('/belanja-grosir/verify', [ProductController::class, 'grosirVerify'])->name('products.grosir.verify');
-Route::post('/belanja-grosir/logout', [ProductController::class, 'grosirLogout'])->name('products.grosir.logout');
+Route::get('/products-apotek', [ProductController::class, 'apotek'])->name('products.apotek');
 Route::post('/orders/history', [PurchaseHistoryController::class, 'store'])->name('orders.history.store');
 Route::get('/invoice/{order}', [PurchaseHistoryController::class, 'invoice'])
     ->middleware('signed')
@@ -105,6 +102,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('produk-export', [AdminProdukController::class, 'export'])->name('produk.export');
     Route::resource('produk', AdminProdukController::class);
     Route::post('produk/{produk}/update-stock', [AdminProdukController::class, 'updateStock'])->name('produk.update-stock');
+    Route::post('produk/{produk}/update-inline', [AdminProdukController::class, 'updateInline'])->name('produk.update-inline');
     Route::get('produk-import', [AdminProdukImportController::class, 'showImportForm'])->name('produk.import');
     Route::post('produk-import', [AdminProdukImportController::class, 'import'])->name('produk.import.process');
     Route::get('produk-import/template', [AdminProdukImportController::class, 'downloadTemplate'])->name('produk.import.template');

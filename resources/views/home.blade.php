@@ -968,17 +968,6 @@
           </div>
         </div>
       </a>
-      <a href="{{ route('products.grosir') }}" class="promo-card promo-wholesale">
-        <div class="promo-card-content">
-          <div class="promo-card-icon-wrap">
-            <img src="{{ asset('logo1.png') }}" alt="Logo Medikpedia" class="promo-wholesale-logo">
-          </div>
-          <div class="promo-card-text">
-            <h4>Belanja Grosir</h4>
-            <p>Harga khusus grosir dengan kode akses.</p>
-          </div>
-        </div>
-      </a>
       <a href="https://store.goapotik.com/penjual/apotek-medikpedia" target="_blank" rel="noopener" class="promo-card promo-goapotik">
         <div class="promo-card-content">
           <img src="{{ asset('LOGO GOAPOTIK.png') }}" alt="GoApotik" class="promo-goapotik-logo">
@@ -1129,6 +1118,11 @@
             @if($med->kategori)<span class="prod-brand-tag">{{ $med->kategori }}</span>@endif
             <h3 class="prod-name">{{ $med->nama_obat }}</h3>
             <div class="prod-price">{{ $med->getFormattedCatalogPrice('harga_retail') }}</div>
+            @php $stock = (int) $med->stok; @endphp
+            <span class="product-stock {{ $stock <= 0 ? 'empty' : ($stock <= 10 ? 'low' : 'available') }}">
+              <i class="fa-solid {{ $stock <= 0 ? 'fa-circle-xmark' : 'fa-boxes-stacked' }}"></i>
+              {{ $stock > 0 ? 'Stok: ' . number_format($stock, 0, ',', '.') : 'Stok habis' }}
+            </span>
             @if($med->sediaan_label)
               <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.35rem;display:flex;align-items:center;gap:0.35rem;">
                 <i class="fa-solid fa-cube"></i> <span>{{ $med->sediaan_label }}</span>
@@ -1785,6 +1779,11 @@
               @endif
               <h3 class="prod-name">{{ $med->nama_obat }}</h3>
               <div class="prod-price">{{ $med->getFormattedCatalogPrice('harga_retail') }}</div>
+              @php $stock = (int) $med->stok; @endphp
+              <span class="product-stock {{ $stock <= 0 ? 'empty' : ($stock <= 10 ? 'low' : 'available') }}">
+                <i class="fa-solid {{ $stock <= 0 ? 'fa-circle-xmark' : 'fa-boxes-stacked' }}"></i>
+                {{ $stock > 0 ? 'Stok: ' . number_format($stock, 0, ',', '.') : 'Stok habis' }}
+              </span>
               @if($med->sediaan_label)
                 <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.35rem;display:flex;align-items:center;gap:0.35rem;">
                   <i class="fa-solid fa-cube"></i> <span>{{ $med->sediaan_label }}</span>

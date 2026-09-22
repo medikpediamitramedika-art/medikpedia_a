@@ -1,8 +1,8 @@
 @php
     $formatMoney = fn ($amount) => 'Rp ' . number_format((int) $amount, 0, ',', '.');
     $originalTotal = (int) ($order->original_total ?: $order->total);
-    $discountedTotal = (int) ($order->discounted_total ?: $order->total);
-    $total = $order->approval_status === 'approved' ? $discountedTotal : $originalTotal;
+    $discountedTotal = (int) ($order->discounted_total ?? $order->total);
+    $total = $discountedTotal;
     $discountTotal = max(0, $originalTotal - $discountedTotal);
     $numberToWords = function (int $number) use (&$numberToWords): string {
         $words = ['', 'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan', 'sembilan', 'sepuluh', 'sebelas'];
@@ -85,7 +85,7 @@
             <img src="{{ asset('logo1.png') }}" alt="Logo Apotek Medikpedia">
             <div>
                 <h1>APOTEK MEDIKPEDIA</h1>
-                <p class="tagline">Melayani pembelian Grosir dan Retail</p>
+                <p class="tagline">Melayani pembelian apotek dan retail</p>
                 <p>ITC Cempaka Mas LT.1 No. 88, RT.4 RW.8, Kel. Sumur Batu, Kec. Kemayoran, Jakarta Pusat</p>
                 <p>Website: www.medikpedia.com - Whatsapp: 085890007359</p>
             </div>
@@ -99,7 +99,13 @@
             <div class="meta-group"><span class="meta-label">JENIS PEMBELI</span><span>:</span><span class="meta-value">{{ $buyerType }}</span></div>
             <div class="meta-group"><span class="meta-label">NO. INVOICE</span><span>:</span><span class="meta-value">INV/{{ $order->created_at?->format('Ymd') }}/{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</span></div>
             <div class="meta-group"><span class="meta-label">ALAMAT</span><span>:</span><span class="meta-value">{{ collect([$order->address, $order->kecamatan, $order->kota])->filter()->join(', ') ?: '-' }}</span></div>
-            <div class="meta-group"><span class="meta-label">PEMBAYARAN</span><span>:</span><span class="meta-value">{{ $order->payment_method ?: '-' }}</span></div>
+            @php
+                $paymentDisplay = $order->payment_method ?: '-';
+                if ($order->payment_method === 'Tempo' && !empty($order->payment_term_days)) {
+                    $paymentDisplay = 'Tempo (' . $order->payment_term_days . ' hari)';
+                }
+            @endphp
+            <div class="meta-group"><span class="meta-label">PEMBAYARAN</span><span>:</span><span class="meta-value">{{ $paymentDisplay }}</span></div>
             <div class="meta-group"><span class="meta-label">NOMOR TELEPON</span><span>:</span><span class="meta-value">{{ $order->phone ?: '-' }}</span></div>
             @if($order->sia || $order->sipa)
                 <div class="meta-group"><span class="meta-label">SIA / SIPA</span><span>:</span><span class="meta-value">{{ $order->sia ?: '-' }} / {{ $order->sipa ?: '-' }}</span></div>
@@ -115,8 +121,9 @@
                         @php
                             $name = $item['nama_obat'] ?? $item['name'] ?? 'Produk';
                             $qty = (int) ($item['quantity'] ?? $item['qty'] ?? 0);
-                            $price = (int) ($item['harga'] ?? $item['price'] ?? 0);
+                            $price = (int) ($item['harga'] ?? $item['harga_modal'] ?? $item['price'] ?? 0);
                             $discount = (int) ($item['potongan'] ?? $item['discount'] ?? 0);
+                            $discount = min($discount, $qty * $price);
                             $lineTotal = max(0, ($qty * $price) - $discount);
                         @endphp
                         <tr><td class="center">{{ $index + 1 }}</td><td>{{ $name }} @if(!empty($item['brand']))<span class="item-note">{{ $item['brand'] }}</span>@endif</td><td>{{ $item['catatan'] ?? $item['note'] ?? '-' }}</td><td class="center">{{ $item['sediaan'] ?? 'Pcs' }}</td><td class="center">{{ $qty }}</td><td class="money">{{ $formatMoney($price) }}</td><td class="money">{{ $discount ? $formatMoney($discount) : '-' }}</td><td class="money">{{ $formatMoney($lineTotal) }}</td></tr>

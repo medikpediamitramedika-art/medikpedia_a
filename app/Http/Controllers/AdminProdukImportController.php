@@ -33,13 +33,13 @@ class AdminProdukImportController extends Controller
 
     public function downloadTemplate()
     {
-        $columns = ['NO', 'PRINCIPLE', 'NAMA PRODUK', 'LOGO', 'RESEP', 'KOMPOSISI', 'SATUAN', 'MODAL', 'HARGA GROSIR', 'HARGA RETAIL'];
-        $widths  = [8, 25, 30, 15, 12, 30, 12, 15, 18, 18];
+        $columns = ['NO', 'PRINCIPLE', 'NAMA PRODUK', 'LOGO', 'RESEP', 'KOMPOSISI', 'SATUAN', 'STOK', 'MODAL', 'HARGA RETAIL'];
+        $widths  = [8, 25, 30, 15, 12, 30, 12, 10, 15, 18];
 
         $rows = [
-            ['1', 'PT KIMIA FARMA', 'Paracetamol 500mg', '', 'BEBAS', 'Paracetamol 500 mg', 'fls', '4000', '4500', '5000'],
-            ['2', 'PT WARDAH', 'Pelembab Wajah SPF30', '', 'BEBAS', 'Aqua, Glycerin, SPF', 'box', '70000', '78000', '85000'],
-            ['3', 'PT OMRON', 'Tensimeter Digital', '', 'BEBAS', 'Mengukur tekanan darah', 'pcs', '300000', '325000', '350000'],
+            ['1', 'PT KIMIA FARMA', 'Paracetamol 500mg', '', 'BEBAS', 'Paracetamol 500 mg', 'fls', '100', '4000', '5000'],
+            ['2', 'PT WARDAH', 'Pelembab Wajah SPF30', '', 'BEBAS', 'Aqua, Glycerin, SPF', 'box', '80', '70000', '85000'],
+            ['3', 'PT OMRON', 'Tensimeter Digital', '', 'BEBAS', 'Mengukur tekanan darah', 'pcs', '20', '300000', '350000'],
         ];
 
         return \App\Helpers\XlsxWriter::download('template_produk.xlsx', $columns, $rows, $widths);
@@ -263,8 +263,7 @@ class AdminProdukImportController extends Controller
 
                 $hargaRetail = $this->parseHarga($this->getValue($data, ['HARGA RETAIL', 'HARGA', 'RETAIL']));
                 $hargaModal = $this->parseHarga($this->getValue($data, ['MODAL', 'HARGA MODAL']));
-                $hargaGrosir = $this->parseHarga($this->getValue($data, ['HARGA GROSIR', 'GROSIR']));
-                [$hargaModal, $hargaGrosir, $hargaRetail] = $this->normalizeCatalogPrices($hargaModal, $hargaGrosir, $hargaRetail);
+                $stok = max(0, (int) preg_replace('/[^0-9]/', '', (string) ($data['STOK'] ?? '0')));
 
                 $katRaw    = strtoupper(trim((string) ($data['KATEGORI'] ?? '')));
                 $katProduk = in_array($katRaw, $validKategori) ? $katRaw : 'OBAT';
@@ -330,9 +329,8 @@ class AdminProdukImportController extends Controller
                         'kategori_produk'  => $katProduk,
                         'harga'            => $hargaRetail ?: $this->parseHarga($hargaRaw),
                         'harga_modal'     => $hargaModal,
-                        'harga_grosir'    => $hargaGrosir,
                         'harga_retail'    => $hargaRetail ?: $this->parseHarga($hargaRaw),
-                        'stok'             => 0,
+                        'stok'             => $stok,
                         'terjual'          => $terjual,
                         'grade'            => $grade ?: null,
                         'deskripsi'        => $deskripsiValue,
@@ -364,7 +362,6 @@ class AdminProdukImportController extends Controller
             'BRAND' => ['BRAND', 'MERK', 'MEREK'],
             'HARGA' => ['HARGA', 'RETAIL', 'PRICE'],
             'MODAL' => ['MODAL', 'HARGAMODAL', 'COST'],
-            'HARGA GROSIR' => ['HARGAGROSIR', 'GROSIR', 'WHOLESALE'],
             'HARGA RETAIL' => ['HARGARETAIL', 'RETAILPRICE'],
             'STOK' => ['STOK', 'STOCK', 'STOCKQTY', 'QTY', 'JUMLAH'],
             'TERJUAL' => ['TERJUAL', 'SALES', 'TERJUALSALES', 'TOTALTERJUAL'],
@@ -431,16 +428,4 @@ class AdminProdukImportController extends Controller
         return $parsed;
     }
 
-    private function normalizeCatalogPrices(float $modal, float $grosir, float $retail): array
-    {
-        if ($modal <= 0) return [$modal, $grosir, $retail];
-
-        foreach (['grosir', 'retail'] as $type) {
-            while ($$type > ($modal * 5) && $$type > 0) {
-                $$type /= 10;
-            }
-        }
-
-        return [$modal, round($grosir), round($retail)];
-    }
 }

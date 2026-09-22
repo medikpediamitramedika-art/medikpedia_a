@@ -565,6 +565,11 @@
                             <h3 class="medicine-name">{{ $medicine->nama_obat }}</h3>
                             
                             <div class="medicine-price">{{ $medicine->getFormattedCatalogPrice('harga_modal') }}</div>
+                            @php $stock = (int) $medicine->stok; @endphp
+                            <span class="stock-badge {{ $stock <= 0 ? 'stock-out' : ($stock <= 10 ? 'stock-low' : 'stock-available') }}">
+                                <i class="fa-solid {{ $stock <= 0 ? 'fa-circle-xmark' : 'fa-boxes-stacked' }}"></i>
+                                {{ $stock > 0 ? 'Stok: ' . number_format($stock, 0, ',', '.') : 'Stok habis' }}
+                            </span>
                             @if($medicine->sediaan_label)
                                 <div class="medicine-meta" style="display:flex;align-items:center;gap:0.35rem;margin-bottom:0.6rem;">
                                     <i class="fa-solid fa-cube"></i> <span>Sediaan: {{ $medicine->sediaan_label }}</span>
@@ -573,7 +578,7 @@
                             <a href="{{ route('medicines.show', $medicine->id) }}" class="medicine-btn">
                                 Lihat Detail <i class="fa-solid fa-arrow-right"></i>
                             </a>
-                            <button class="btn-cart" onclick="addToCart({{ $medicine->id }}, '{{ addslashes($medicine->nama_obat) }}', {{ $medicine->harga_modal ?: $medicine->harga }}, '{{ $medicine->gambar ? url('storage/'.$medicine->gambar) : '' }}', '{{ addslashes($medicine->brand ?: $medicine->kategori) }}', this)">
+                            <button class="btn-cart" onclick="addToCart({{ $medicine->id }}, '{{ addslashes($medicine->nama_obat) }}', {{ (float) ($medicine->harga_modal ?: $medicine->harga) }}, '{{ $medicine->gambar ? url('storage/'.$medicine->gambar) : '' }}', '{{ addslashes($medicine->brand ?: $medicine->kategori) }}', this)">
                                 <i class="fa-solid fa-cart-plus"></i> Tambah ke Keranjang
                             </button>
                         </div>

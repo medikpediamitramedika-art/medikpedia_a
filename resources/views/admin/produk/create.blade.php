@@ -133,12 +133,6 @@
                         <input type="number" name="harga_modal" class="form-input" placeholder="4000" step="1" min="0" value="{{ old('harga_modal') }}">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Harga Grosir (Rp)</label>
-                        <input type="number" name="harga_grosir" class="form-input" placeholder="4500" step="1" min="0" value="{{ old('harga_grosir') }}">
-                    </div>
-                </div>
-                <div class="form-grid">
-                    <div class="form-group">
                         <label class="form-label">Harga Retail (Rp) <span class="req">*</span></label>
                         <input type="number" name="harga" class="form-input {{ $errors->has('harga') ? 'is-invalid' : '' }}"
                                placeholder="5000" step="1" min="0" value="{{ old('harga') }}" required>

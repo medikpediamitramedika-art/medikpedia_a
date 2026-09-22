@@ -55,8 +55,14 @@
                             @endif
                         </td>
                         <td>
+                            @php
+                                $paymentLabel = $order->payment_method;
+                                if ($paymentLabel === 'Tempo' && !empty($order->payment_term_days)) {
+                                    $paymentLabel .= ' (' . $order->payment_term_days . ' hari)';
+                                }
+                            @endphp
                             @if($order->payment_method)
-                                <span style="background:#eff6ff;color:#1d4ed8;padding:0.2rem 0.55rem;border-radius:20px;font-size:0.78rem;font-weight:600;">{{ $order->payment_method }}</span>
+                                <span style="background:#eff6ff;color:#1d4ed8;padding:0.2rem 0.55rem;border-radius:20px;font-size:0.78rem;font-weight:600;">{{ $paymentLabel }}</span>
                             @else
                                 <span style="color:#d1d5db;font-size:0.8rem;font-style:italic;">—</span>
                             @endif
@@ -349,7 +355,7 @@
                 <div style="font-weight: 700; font-size: 1.05rem;">Status Persetujuan: <span style="display:inline-block;padding:0.25rem 0.6rem;border-radius:999px;font-size:0.8rem;font-weight:700;color:${order.approval_status === 'approved' ? '#16a34a' : order.approval_status === 'rejected' ? '#dc2626' : '#64748b'};background:${order.approval_status === 'approved' ? '#dcfce7' : order.approval_status === 'rejected' ? '#fee2e2' : '#f1f5f9'};">${order.approval_status === 'approved' ? 'Setuju' : order.approval_status === 'rejected' ? 'Tidak' : 'Belum diproses'}</span></div>
                 <div style="margin-top: 0.35rem; font-weight: 700; font-size: 1.05rem;">Total Efektif: Rp ${Number(order.effective_total || 0).toLocaleString('id-ID')}</div>
             </div>
-            ${order.payment_method ? `<div style="margin-top:0.75rem;padding:0.6rem 0.9rem;background:#eff6ff;border-radius:8px;font-size:0.9rem;color:#1d4ed8;"><i class="fa-solid fa-credit-card" style="margin-right:0.4rem;"></i> <strong>Metode Pembayaran:</strong> ${order.payment_method}</div>` : ''}
+            ${order.payment_method ? `<div style="margin-top:0.75rem;padding:0.6rem 0.9rem;background:#eff6ff;border-radius:8px;font-size:0.9rem;color:#1d4ed8;"><i class="fa-solid fa-credit-card" style="margin-right:0.4rem;"></i> <strong>Metode Pembayaran:</strong> ${order.payment_method === 'Tempo' && order.payment_term_days ? `${order.payment_method} (${order.payment_term_days} hari)` : order.payment_method}</div>` : ''}
         `;
         
         content.innerHTML = detailHtml;

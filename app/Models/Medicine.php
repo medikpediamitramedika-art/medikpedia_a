@@ -22,7 +22,6 @@ class Medicine extends Model
         'kategori_produk',
         'harga',
         'harga_modal',
-        'harga_grosir',
         'harga_retail',
         'stok',
         'terjual',
@@ -36,7 +35,6 @@ class Medicine extends Model
     protected $casts = [
         'harga'   => 'decimal:2',
         'harga_modal'  => 'decimal:2',
-        'harga_grosir' => 'decimal:2',
         'harga_retail' => 'decimal:2',
         'stok'    => 'integer',
         'terjual' => 'integer',

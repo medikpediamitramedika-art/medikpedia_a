@@ -395,6 +395,11 @@
                             <h3 class="medicine-name">{{ $medicine->nama_obat }}</h3>
                             
                             <div class="medicine-price">{{ $medicine->getFormattedCatalogPrice('harga_retail') }}</div>
+                            @php $stock = (int) $medicine->stok; @endphp
+                            <span class="product-stock {{ $stock <= 0 ? 'empty' : ($stock <= 10 ? 'low' : 'available') }}">
+                                <i class="fa-solid {{ $stock <= 0 ? 'fa-circle-xmark' : 'fa-boxes-stacked' }}"></i>
+                                {{ $stock > 0 ? 'Stok: ' . number_format($stock, 0, ',', '.') : 'Stok habis' }}
+                            </span>
                             @if($medicine->sediaan_label)
                                 <div class="medicine-meta" style="display:flex;align-items:center;gap:0.35rem;margin-bottom:0.6rem;">
                                     <i class="fa-solid fa-cube"></i> <span>Sediaan: {{ $medicine->sediaan_label }}</span>
