@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
   "__commonjs-dynamic-modules-B9lKsKkd.js": {
     "file": "assets/_commonjs-dynamic-modules-B9lKsKkd.js",
     "name": "_commonjs-dynamic-modules"
@@ -26,8 +25,6 @@
     "src": "node_modules/dompurify/dist/purify.es.mjs",
     "isDynamicEntry": true
   },
-=======
->>>>>>> origin/main
   "resources/css/app.css": {
     "file": "assets/app-tn0RQdqM.css",
     "src": "resources/css/app.css",
@@ -42,7 +39,6 @@
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true
-<<<<<<< HEAD
   },
   "resources/js/gass-preview.js": {
     "file": "assets/gass-preview-ODsZk3xG.js",
@@ -54,7 +50,5 @@
       "_mammoth.browser-CAH26SuV.js",
       "node_modules/dompurify/dist/purify.es.mjs"
     ]
-=======
->>>>>>> origin/main
   }
 }
