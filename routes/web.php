@@ -18,7 +18,10 @@ use App\Http\Controllers\AdminProdukImportController;
 use App\Http\Controllers\AdminBannerController;
 use App\Http\Controllers\AdminPromoProductController;
 use App\Http\Controllers\PurchaseHistoryController;
+<<<<<<< HEAD
 use App\Http\Controllers\GassRoomController;
+=======
+>>>>>>> origin/main
 
 // Public routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -66,6 +69,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::post('/customer/logout', [AuthController::class, 'customerLogout'])->name('customer.logout');
 
+<<<<<<< HEAD
 // GASS shared file room
 Route::get('/gass/access', [GassRoomController::class, 'accessForm'])->name('gass.access.form');
 Route::get('/gass/room', [GassRoomController::class, 'index'])->name('gass.room');
@@ -79,6 +83,8 @@ Route::delete('/gass/room/files/{file}', [GassRoomController::class, 'destroy'])
 Route::get('/gass/room/files/{file}', [GassRoomController::class, 'download'])->name('gass.files.download');
 Route::post('/gass/leave', [GassRoomController::class, 'leave'])->name('gass.leave');
 
+=======
+>>>>>>> origin/main
 // Admin routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');

@@ -1049,6 +1049,7 @@
     <div class="float-wrap">
         <!-- Links (semua tombol) -->
         <div class="float-links" id="floatLinks">
+<<<<<<< HEAD
             <!-- GASS file room -->
             <div class="float-item">
                 <span class="float-tooltip">Ruang File GASS</span>
@@ -1058,6 +1059,8 @@
                     <img src="{{ asset('logo gass.jpeg') }}" alt="Ruang File GASS" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
                 </a>
             </div>
+=======
+>>>>>>> origin/main
             <!-- Dermilosofi -->
             <div class="float-item">
                 <span class="float-tooltip">Dermilosofi</span>
