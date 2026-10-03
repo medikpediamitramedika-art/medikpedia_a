@@ -1,0 +1,89 @@
+/* ==========================================
+   FIX CURSOR TYPING/TEXT YANG MENJENGKELKAN
+   ========================================== */
+
+/* FORCE RESET - Hapus semua cursor text/wait/progress */
+html, html *, html *::before, html *::after,
+body, body *, body *::before, body *::after {
+    cursor: auto !important;
+}
+
+/* Cursor pointer untuk elemen interaktif */
+a, a *,
+button, button *,
+[role="button"], [role="button"] *,
+.btn, .btn *,
+.button, .button *,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+select,
+label[for],
+[onclick],
+[class*="click"],
+[class*="button"] {
+    cursor: pointer !important;
+}
+
+/* Cursor text HANYA untuk input field */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+input[type="number"],
+textarea {
+    cursor: text !important;
+}
+
+/* Cursor disabled */
+[disabled], [disabled] *,
+.disabled, .disabled *,
+[aria-disabled="true"], [aria-disabled="true"] * {
+    cursor: not-allowed !important;
+}
+
+/* FORCE override untuk html dan body */
+html {
+    cursor: auto !important;
+}
+
+body {
+    cursor: auto !important;
+}
+
+/* Override inline styles yang mengatur cursor */
+[style*="cursor: wait"],
+[style*="cursor: progress"],
+[style*="cursor: text"],
+[style*="cursor:wait"],
+[style*="cursor:progress"],
+[style*="cursor:text"] {
+    cursor: auto !important;
+}
+
+/* Override class-based cursor */
+.cursor-wait,
+.cursor-progress,
+.cursor-text,
+.loading,
+.processing {
+    cursor: auto !important;
+}
+
+/* Khusus untuk div, span, p, dan elemen non-interaktif */
+div, div *,
+span, span *,
+p, p *,
+h1, h2, h3, h4, h5, h6,
+section, article, main, header, footer, nav,
+img, svg, i, em, strong, b {
+    cursor: auto !important;
+}
+
+/* Override apapun yang mencoba mengubah cursor */
+html[style],
+body[style] {
+    cursor: auto !important;
+}

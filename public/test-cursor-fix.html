@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Cursor Fix</title>
+    
+    <!-- Fix Cursor CSS -->
+    <link rel="stylesheet" href="css/fix-cursor.css">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 2rem;
+            background: #f3f4f6;
+        }
+        .test-box {
+            background: white;
+            padding: 2rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-box h2 {
+            margin-top: 0;
+            color: #1E88E5;
+        }
+        button {
+            padding: 0.5rem 1rem;
+            margin: 0.5rem;
+            border: none;
+            border-radius: 4px;
+            background: #1E88E5;
+            color: white;
+            cursor: pointer;
+        }
+        .bad-cursor {
+            cursor: text !important;
+        }
+        .status {
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status.error {
+            background: #fee2e2;
+            color: #7f1d1d;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test Cursor Fix</h1>
+    
+    <div class="status success" id="status">
+        ✅ Cursor fix is loading...
+    </div>
+    
+    <div class="test-box">
+        <h2>Test 1: Normal Area</h2>
+        <p>Gerakkan mouse di area ini. Cursor seharusnya AUTO (panah default).</p>
+    </div>
+    
+    <div class="test-box">
+        <h2>Test 2: Area dengan cursor: text (forced)</h2>
+        <div class="bad-cursor" style="cursor: text !important; padding: 1rem; background: #fef3c7;">
+            <p>Area ini DIPAKSA menggunakan cursor: text. Seharusnya tetap AUTO.</p>
+        </div>
+    </div>
+    
+    <div class="test-box">
+        <h2>Test 3: Buttons (should be pointer)</h2>
+        <button onclick="alert('Clicked!')">Click Me</button>
+        <button>Button 2</button>
+        <button>Button 3</button>
+    </div>
+    
+    <div class="test-box">
+        <h2>Test 4: Input Fields (should be text cursor)</h2>
+        <input type="text" placeholder="Nama" style="padding: 0.5rem; margin: 0.5rem 0; width: 300px; display: block;">
+        <input type="email" placeholder="Email" style="padding: 0.5rem; margin: 0.5rem 0; width: 300px; display: block;">
+        <textarea placeholder="Pesan" style="padding: 0.5rem; margin: 0.5rem 0; width: 300px; height: 100px; display: block;"></textarea>
+    </div>
+    
+    <div class="test-box">
+        <h2>Test 5: Force cursor wait with JavaScript</h2>
+        <button onclick="testForceCursor()">Force cursor: wait</button>
+        <p id="force-result">Klik button untuk test force cursor</p>
+    </div>
+    
+    <div class="test-box">
+        <h2>Debug Info</h2>
+        <p><strong>Body cursor:</strong> <span id="body-cursor">-</span></p>
+        <p><strong>HTML cursor:</strong> <span id="html-cursor">-</span></p>
+        <p><strong>Computed body cursor:</strong> <span id="computed-cursor">-</span></p>
+    </div>
+    
+    <!-- Fix Cursor Scripts -->
+    <script src="js/fix-cursor-override.js"></script>
+    <script src="js/fix-cursor.js"></script>
+    
+    <script>
+        function testForceCursor() {
+            document.body.style.cursor = 'wait';
+            document.getElementById('force-result').textContent = 'Cursor dipaksa ke "wait" - seharusnya tetap auto!';
+            setTimeout(() => {
+                document.getElementById('force-result').textContent = 'Test selesai. Cursor seharusnya kembali auto.';
+            }, 2000);
+        }
+        
+        function updateDebugInfo() {
+            document.getElementById('body-cursor').textContent = document.body.style.cursor || 'none';
+            document.getElementById('html-cursor').textContent = document.documentElement.style.cursor || 'none';
+            document.getElementById('computed-cursor').textContent = window.getComputedStyle(document.body).cursor;
+        }
+        
+        setInterval(updateDebugInfo, 500);
+        updateDebugInfo();
+        
+        setTimeout(() => {
+            const status = document.getElementById('status');
+            status.textContent = '✅ Cursor fix is active! Semua cursor text/wait/progress seharusnya di-override ke auto.';
+        }, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+{
+  "__commonjs-dynamic-modules-B9lKsKkd.js": {
+    "file": "assets/_commonjs-dynamic-modules-B9lKsKkd.js",
+    "name": "_commonjs-dynamic-modules"
+  },
+  "_exceljs.min-D6Q0cs-G.js": {
+    "file": "assets/exceljs.min-D6Q0cs-G.js",
+    "name": "exceljs.min",
+    "isDynamicEntry": true,
+    "imports": [
+      "__commonjs-dynamic-modules-B9lKsKkd.js"
+    ]
+  },
+  "_mammoth.browser-CAH26SuV.js": {
+    "file": "assets/mammoth.browser-CAH26SuV.js",
+    "name": "mammoth.browser",
+    "isDynamicEntry": true,
+    "imports": [
+      "__commonjs-dynamic-modules-B9lKsKkd.js"
+    ]
+  },
+  "node_modules/dompurify/dist/purify.es.mjs": {
+    "file": "assets/purify.es-BPuvlvQ_.js",
+    "name": "purify.es",
+    "src": "node_modules/dompurify/dist/purify.es.mjs",
+    "isDynamicEntry": true
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-tn0RQdqM.css",
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "name": "app",
+    "names": [
+      "app.css"
+    ]
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-BjqOcoUn.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/gass-preview.js": {
+    "file": "assets/gass-preview-ODsZk3xG.js",
+    "name": "gass-preview",
+    "src": "resources/js/gass-preview.js",
+    "isEntry": true,
+    "dynamicImports": [
+      "_exceljs.min-D6Q0cs-G.js",
+      "_mammoth.browser-CAH26SuV.js",
+      "node_modules/dompurify/dist/purify.es.mjs"
+    ]
+  }
+}

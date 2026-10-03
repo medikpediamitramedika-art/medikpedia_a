@@ -1,0 +1,18 @@
+{
+  "name": "Remove BOM from Blade Files",
+  "version": "1.0.0",
+  "description": "Removes UTF-8 BOM from blade PHP files on save to prevent browser rendering gaps",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/*.blade.php"
+    ]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "powershell -Command \"$f='${file}'; $bytes=[System.IO.File]::ReadAllBytes($f); if($bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF){ $enc=New-Object System.Text.UTF8Encoding $false; $raw=[System.IO.File]::ReadAllBytes($f); $nobom=$raw[3..($raw.Length-1)]; [System.IO.File]::WriteAllBytes($f,$nobom); Write-Host 'BOM removed from' $f }\""
+  },
+  "enabled": true,
+  "workspaceFolderName": "medikpedia_app-main",
+  "shortName": "remove-bom-blade"
+}
