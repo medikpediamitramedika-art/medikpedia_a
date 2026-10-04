@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\GassRoomFile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -28,14 +29,33 @@ class GassRoomController extends Controller
 
         $validated = $request->validate([
             'search' => ['nullable', 'string', 'max:255'],
+            'uploaded_on' => ['nullable', 'date_format:Y-m-d'],
+            'sort' => ['nullable', 'in:newest,name_asc,size_desc'],
         ]);
         $search = trim($validated['search'] ?? '');
-        $files = GassRoomFile::query()
-            ->when($search !== '', fn ($query) => $query->where('original_name', 'like', '%'.$search.'%'))
-            ->latest()
-            ->get();
+        $uploadedOn = $validated['uploaded_on'] ?? '';
+        $sort = $validated['sort'] ?? 'newest';
+        $query = GassRoomFile::query()
+            ->when($search !== '', fn ($query) => $query->where('original_name', 'like', '%'.$search.'%'));
 
-        return view('gass.room', compact('files', 'search'));
+        if ($uploadedOn !== '') {
+            $localDay = Carbon::createFromFormat('!Y-m-d', $uploadedOn, config('gass.timezone'));
+            $startOfDay = $localDay->copy()->startOfDay()->setTimezone(config('app.timezone'));
+            $endOfDay = $localDay->copy()->endOfDay()->setTimezone(config('app.timezone'));
+            $query->whereBetween('created_at', [$startOfDay, $endOfDay]);
+        }
+
+        if ($sort === 'name_asc') {
+            $query->orderByRaw('LOWER(original_name) ASC')->orderByDesc('created_at');
+        } elseif ($sort === 'size_desc') {
+            $query->orderByDesc('size_bytes')->orderBy('original_name');
+        } else {
+            $query->latest();
+        }
+
+        $files = $query->get();
+
+        return view('gass.room', compact('files', 'search', 'uploadedOn', 'sort'));
     }
 
     public function access(Request $request): RedirectResponse
@@ -60,8 +80,10 @@ class GassRoomController extends Controller
         $this->ensureRoomAccess($request);
 
         $validated = $request->validate([
-            'files' => ['required', 'array', 'min:1'],
+            'files' => ['required', 'array', 'min:1', 'max:5'],
             'files.*' => ['required', 'file'],
+        ], [
+            'files.max' => 'Maksimal 5 file dapat diunggah sekaligus.',
         ]);
 
         foreach ($validated['files'] as $file) {
@@ -171,6 +193,8 @@ class GassRoomController extends Controller
 
             return redirect()->route('gass.room', array_filter([
                 'search' => $request->input('search'),
+                'uploaded_on' => $request->input('uploaded_on'),
+                'sort' => $request->input('sort'),
             ]))->with('error', 'File gagal dihapus. Silakan coba lagi.');
         }
 
@@ -178,6 +202,8 @@ class GassRoomController extends Controller
 
         return redirect()->route('gass.room', array_filter([
             'search' => $request->input('search'),
+            'uploaded_on' => $request->input('uploaded_on'),
+            'sort' => $request->input('sort'),
         ]))->with('success', 'File berhasil dihapus.');
     }
 

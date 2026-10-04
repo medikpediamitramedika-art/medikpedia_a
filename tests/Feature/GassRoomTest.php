@@ -186,6 +186,117 @@ class GassRoomTest extends TestCase
             ->assertDontSee('Daftar Harga.xlsx');
     }
 
+    public function test_room_can_filter_by_upload_date_and_sort_by_name_or_file_size(): void
+    {
+        foreach ([
+            ['Zebra.pdf', 300, '2026-10-03 08:00:00'],
+            ['alpha.pdf', 200, '2026-10-02 08:00:00'],
+            ['Middle.pdf', 500, '2026-10-03 09:00:00'],
+        ] as [$name, $size, $createdAt]) {
+            $file = GassRoomFile::query()->create([
+                'original_name' => $name,
+                'path' => 'gass-room/'.str_replace('.', '-', $name),
+                'size_bytes' => $size,
+                'mime_type' => 'application/pdf',
+            ]);
+            $file->forceFill(['created_at' => $createdAt, 'updated_at' => $createdAt])->save();
+        }
+
+        $this->withSession(['gass_room_access' => true])
+            ->get(route('gass.room', ['uploaded_on' => '2026-10-03']))
+            ->assertOk()
+            ->assertSee('Zebra.pdf')
+            ->assertSee('Middle.pdf')
+            ->assertDontSee('alpha.pdf');
+
+        $this->withSession(['gass_room_access' => true])
+            ->get(route('gass.room', ['sort' => 'name_asc']))
+            ->assertOk()
+            ->assertSeeInOrder(['alpha.pdf', 'Middle.pdf', 'Zebra.pdf']);
+
+        $this->withSession(['gass_room_access' => true])
+            ->get(route('gass.room', ['sort' => 'size_desc']))
+            ->assertOk()
+            ->assertSeeInOrder(['Middle.pdf', 'Zebra.pdf', 'alpha.pdf']);
+    }
+
+    public function test_each_file_shows_its_upload_date_and_whatsapp_access_details(): void
+    {
+        config(['gass.access_code' => 'share-code-42']);
+        $file = GassRoomFile::query()->create([
+            'original_name' => 'Panduan GASS.pdf',
+            'path' => 'gass-room/share-guide',
+            'size_bytes' => 10,
+            'mime_type' => 'application/pdf',
+        ]);
+        $file->forceFill(['created_at' => '2026-10-03 09:45:00', 'updated_at' => '2026-10-03 09:45:00'])->save();
+
+        $this->withSession(['gass_room_access' => true])
+            ->get(route('gass.room'))
+            ->assertOk()
+            ->assertSee('<td class="gass-file-number">1</td>', false)
+            ->assertSee('03/10/2026 16:45')
+            ->assertSee('wa.me/?text=File%20Ruang%20GASS', false)
+            ->assertSee('Nama%20file%3A%20Panduan%20GASS.pdf', false)
+            ->assertSee('Tanggal%20unggah%3A%2003%2F10%2F2026%2016%3A45', false)
+            ->assertSee('Kode%20akses%3A%20share-code-42', false)
+            ->assertSee(rawurlencode(route('gass.room')), false);
+    }
+
+    public function test_room_rejects_invalid_date_and_sort_filters(): void
+    {
+        $this->withSession(['gass_room_access' => true])
+            ->get(route('gass.room', ['uploaded_on' => 'not-a-date']))
+            ->assertSessionHasErrors('uploaded_on');
+
+        $this->withSession(['gass_room_access' => true])
+            ->get(route('gass.room', ['sort' => 'random']))
+            ->assertSessionHasErrors('sort');
+    }
+
+    public function test_room_upload_form_offers_a_dropzone_and_file_selection_summary(): void
+    {
+        $this->withSession(['gass_room_access' => true])
+            ->get(route('gass.room'))
+            ->assertOk()
+            ->assertSee('id="gass-dropzone"', false)
+            ->assertSee('Tarik file ke sini atau klik untuk memilih')
+            ->assertSee('Pilih maksimal 5 file sekaligus')
+            ->assertSee('const maxFiles = 5;', false)
+            ->assertSee('id="gass-file-summary"', false)
+            ->assertSee('aria-live="polite"', false)
+            ->assertSee('id="gass-selected-files"', false)
+            ->assertSee("dropzone.addEventListener('drop'", false);
+    }
+
+    public function test_upload_accepts_five_files_and_rejects_six(): void
+    {
+        Storage::fake('local');
+
+        $tooManyFiles = array_map(
+            fn ($index) => UploadedFile::fake()->create("too-many-{$index}.txt"),
+            range(1, 6),
+        );
+
+        $this->withSession(['gass_room_access' => true])
+            ->post(route('gass.files.upload'), ['files' => $tooManyFiles])
+            ->assertSessionHasErrors('files');
+
+        $this->assertSame(0, GassRoomFile::query()->count());
+
+        $fiveFiles = array_map(
+            fn ($index) => UploadedFile::fake()->create("allowed-{$index}.txt"),
+            range(1, 5),
+        );
+
+        $this->withSession(['gass_room_access' => true])
+            ->post(route('gass.files.upload'), ['files' => $fiveFiles])
+            ->assertRedirect(route('gass.room'))
+            ->assertSessionHas('success');
+
+        $this->assertSame(5, GassRoomFile::query()->count());
+    }
+
     public function test_upload_accepts_arbitrary_file_types_without_an_application_size_limit(): void
     {
         Storage::fake('local');
