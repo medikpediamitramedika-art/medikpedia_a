@@ -215,12 +215,17 @@ class GassRoomTest extends TestCase
             ->assertSeeInOrder(['alpha.pdf', 'Middle.pdf', 'Zebra.pdf']);
 
         $this->withSession(['gass_room_access' => true])
+            ->get(route('gass.room', ['sort' => 'size_asc']))
+            ->assertOk()
+            ->assertSeeInOrder(['alpha.pdf', 'Zebra.pdf', 'Middle.pdf']);
+
+        $this->withSession(['gass_room_access' => true])
             ->get(route('gass.room', ['sort' => 'size_desc']))
             ->assertOk()
             ->assertSeeInOrder(['Middle.pdf', 'Zebra.pdf', 'alpha.pdf']);
     }
 
-    public function test_each_file_shows_its_upload_date_and_whatsapp_access_details(): void
+    public function test_file_sharing_uses_a_file_only_public_link_without_exposing_the_access_code(): void
     {
         config(['gass.access_code' => 'share-code-42']);
         $file = GassRoomFile::query()->create([
@@ -236,11 +241,88 @@ class GassRoomTest extends TestCase
             ->assertOk()
             ->assertSee('<td class="gass-file-number">1</td>', false)
             ->assertSee('03/10/2026 16:45')
-            ->assertSee('wa.me/?text=File%20Ruang%20GASS', false)
-            ->assertSee('Nama%20file%3A%20Panduan%20GASS.pdf', false)
-            ->assertSee('Tanggal%20unggah%3A%2003%2F10%2F2026%2016%3A45', false)
-            ->assertSee('Kode%20akses%3A%20share-code-42', false)
-            ->assertSee(rawurlencode(route('gass.room')), false);
+            ->assertSee('Share')
+            ->assertSee('data-share-trigger', false)
+            ->assertSeeInOrder(['>Lihat</a>', '>Unduh</a>', '>Share</button>', '>Hapus</button>'], false)
+            ->assertDontSee('share-code-42');
+
+        $this->withSession(['gass_room_access' => true])
+            ->post(route('gass.files.share', $file))
+            ->assertRedirect();
+
+        $file->refresh();
+        $this->assertTrue($file->is_public);
+        $this->assertNotEmpty($file->share_token);
+
+        $this->withSession(['gass_room_access' => true])
+            ->get(route('gass.room'))
+            ->assertOk()
+            ->assertSee(route('gass.files.shared.view', $file->share_token), false)
+            ->assertDontSee('share-code-42')
+            ->assertDontSee(rawurlencode(route('gass.room')), false);
+    }
+
+    public function test_share_button_can_create_and_revoke_a_public_link_without_reloading(): void
+    {
+        $file = GassRoomFile::query()->create([
+            'original_name' => 'share-async.txt',
+            'path' => 'gass-room/share-async',
+            'size_bytes' => 4,
+        ]);
+
+        $response = $this->withSession(['gass_room_access' => true])
+            ->withHeader('Accept', 'application/json')
+            ->post(route('gass.files.share', $file));
+
+        $response->assertOk()->assertJsonPath('is_public', true);
+        $file->refresh();
+        $response->assertJsonPath('url', route('gass.files.shared.view', $file->share_token));
+
+        $this->post(route('gass.files.share', $file), [], ['Accept' => 'application/json'])
+            ->assertOk()
+            ->assertJsonPath('is_public', false);
+
+        $file->refresh();
+        $this->assertFalse($file->is_public);
+        $this->assertNull($file->share_token);
+    }
+
+    public function test_public_share_links_only_expose_the_shared_file_and_can_be_revoked(): void
+    {
+        Storage::fake('local');
+        $sharedFile = GassRoomFile::query()->create([
+            'original_name' => 'shared.pdf',
+            'path' => 'gass-room/shared-pdf',
+            'size_bytes' => 4,
+            'mime_type' => 'application/pdf',
+            'is_public' => true,
+            'share_token' => str_repeat('a', 64),
+        ]);
+        $privateFile = GassRoomFile::query()->create([
+            'original_name' => 'private.pdf',
+            'path' => 'gass-room/private-pdf',
+            'size_bytes' => 4,
+            'mime_type' => 'application/pdf',
+        ]);
+        Storage::disk('local')->put($sharedFile->path, '%PDF');
+
+        $this->get(route('gass.files.shared.view', $sharedFile->share_token))
+            ->assertOk()
+            ->assertSee('shared.pdf')
+            ->assertDontSee('private.pdf')
+            ->assertDontSee(route('gass.room'))
+            ->assertSee(route('gass.files.shared.content', $sharedFile->share_token));
+        $this->get(route('gass.files.shared.content', $sharedFile->share_token))->assertOk();
+        $this->get(route('gass.files.shared.download', $sharedFile->share_token))
+            ->assertOk()
+            ->assertDownload('shared.pdf');
+        $this->get(route('gass.files.shared.view', $privateFile->id))->assertNotFound();
+
+        $this->withSession(['gass_room_access' => true])
+            ->post(route('gass.files.share', $sharedFile))
+            ->assertRedirect();
+
+        $this->get(route('gass.files.shared.view', str_repeat('a', 64)))->assertNotFound();
     }
 
     public function test_room_rejects_invalid_date_and_sort_filters(): void

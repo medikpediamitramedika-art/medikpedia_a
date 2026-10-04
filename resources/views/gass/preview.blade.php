@@ -50,32 +50,34 @@
 <section class="gass-preview">
     <article class="gass-preview-card" data-gass-preview
         data-preview-type="{{ $previewType }}"
-        data-content-url="{{ route('gass.files.content', $file) }}">
+        data-content-url="{{ $contentUrl }}">
         <header class="gass-preview-header">
             <div class="gass-preview-title">
                 <h1>{{ $file->original_name }}</h1>
                 <p>{{ strtoupper(pathinfo($file->original_name, PATHINFO_EXTENSION)) }} · {{ number_format($file->size_bytes / 1048576, 2) }} MB</p>
             </div>
             <nav class="gass-preview-actions" aria-label="Aksi file">
-                <a class="gass-preview-button" href="{{ route('gass.files.download', $file) }}"><i class="fa-solid fa-download"></i> Unduh</a>
-                <a class="gass-preview-button gass-preview-button-secondary" href="{{ route('gass.room') }}"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
-                <form action="{{ route('gass.files.destroy', $file) }}" method="POST" onsubmit="return confirm('Hapus file ini? Tindakan ini tidak dapat dikembalikan.');">
-                    @csrf
-                    @method('DELETE')
-                    <button class="gass-preview-button gass-preview-button-danger" type="submit"><i class="fa-solid fa-trash"></i> Hapus</button>
-                </form>
+                <a class="gass-preview-button" href="{{ $downloadUrl }}"><i class="fa-solid fa-download"></i> Unduh</a>
+                @unless ($shared)
+                    <a class="gass-preview-button gass-preview-button-secondary" href="{{ route('gass.room') }}"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+                    <form action="{{ route('gass.files.destroy', $file) }}" method="POST" onsubmit="return confirm('Hapus file ini? Tindakan ini tidak dapat dikembalikan.');">
+                        @csrf
+                        @method('DELETE')
+                        <button class="gass-preview-button gass-preview-button-danger" type="submit"><i class="fa-solid fa-trash"></i> Hapus</button>
+                    </form>
+                @endunless
             </nav>
         </header>
         <div class="gass-preview-body">
             <div class="gass-preview-stage" data-preview-stage>
                 @if ($previewType === 'image')
-                    <img src="{{ route('gass.files.content', $file) }}" alt="{{ $file->original_name }}">
+                    <img src="{{ $contentUrl }}" alt="{{ $file->original_name }}">
                 @elseif ($previewType === 'video')
-                    <video src="{{ route('gass.files.content', $file) }}" controls playsinline preload="metadata">Browser tidak mendukung pemutar video.</video>
+                    <video src="{{ $contentUrl }}" controls playsinline preload="metadata">Browser tidak mendukung pemutar video.</video>
                 @elseif ($previewType === 'audio')
-                    <audio src="{{ route('gass.files.content', $file) }}" controls preload="metadata">Browser tidak mendukung pemutar audio.</audio>
+                    <audio src="{{ $contentUrl }}" controls preload="metadata">Browser tidak mendukung pemutar audio.</audio>
                 @elseif ($previewType === 'pdf')
-                    <iframe class="gass-preview-frame" src="{{ route('gass.files.content', $file) }}" title="Pratinjau {{ $file->original_name }}"></iframe>
+                    <iframe class="gass-preview-frame" src="{{ $contentUrl }}" title="Pratinjau {{ $file->original_name }}"></iframe>
                 @elseif (in_array($previewType, ['text', 'excel', 'word'], true))
                     <div class="gass-office" data-office-preview></div>
                 @else

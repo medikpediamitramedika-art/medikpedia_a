@@ -73,6 +73,10 @@ Route::post('/gass/access', [GassRoomController::class, 'access'])
     ->middleware('throttle:5,1')
     ->name('gass.access');
 Route::post('/gass/room/files', [GassRoomController::class, 'upload'])->name('gass.files.upload');
+Route::post('/gass/room/files/{file}/share', [GassRoomController::class, 'toggleSharing'])->name('gass.files.share');
+Route::get('/gass/shared/{token}', [GassRoomController::class, 'sharedView'])->name('gass.files.shared.view');
+Route::get('/gass/shared/{token}/content', [GassRoomController::class, 'sharedContent'])->name('gass.files.shared.content');
+Route::get('/gass/shared/{token}/download', [GassRoomController::class, 'sharedDownload'])->name('gass.files.shared.download');
 Route::get('/gass/room/files/{file}/view', [GassRoomController::class, 'viewFile'])->name('gass.files.view');
 Route::get('/gass/room/files/{file}/content', [GassRoomController::class, 'fileContent'])->name('gass.files.content');
 Route::delete('/gass/room/files/{file}', [GassRoomController::class, 'destroy'])->name('gass.files.destroy');

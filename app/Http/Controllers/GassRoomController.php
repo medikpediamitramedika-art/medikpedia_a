@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\GassRoomFile;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -30,7 +31,7 @@ class GassRoomController extends Controller
         $validated = $request->validate([
             'search' => ['nullable', 'string', 'max:255'],
             'uploaded_on' => ['nullable', 'date_format:Y-m-d'],
-            'sort' => ['nullable', 'in:newest,name_asc,size_desc'],
+            'sort' => ['nullable', 'in:newest,name_asc,size_asc,size_desc'],
         ]);
         $search = trim($validated['search'] ?? '');
         $uploadedOn = $validated['uploaded_on'] ?? '';
@@ -47,6 +48,8 @@ class GassRoomController extends Controller
 
         if ($sort === 'name_asc') {
             $query->orderByRaw('LOWER(original_name) ASC')->orderByDesc('created_at');
+        } elseif ($sort === 'size_asc') {
+            $query->orderBy('size_bytes')->orderBy('original_name');
         } elseif ($sort === 'size_desc') {
             $query->orderByDesc('size_bytes')->orderBy('original_name');
         } else {
@@ -108,6 +111,32 @@ class GassRoomController extends Controller
         return redirect()->route('gass.room')->with('success', 'File berhasil diunggah ke Ruang GASS.');
     }
 
+    public function toggleSharing(Request $request, GassRoomFile $file): RedirectResponse|JsonResponse
+    {
+        $this->ensureRoomAccess($request);
+
+        if ($file->is_public) {
+            $file->forceFill(['is_public' => false, 'share_token' => null])->save();
+
+            if ($request->expectsJson()) {
+                return response()->json(['is_public' => false]);
+            }
+
+            return back()->with('success', 'Berbagi publik untuk file ini telah dinonaktifkan.');
+        }
+
+        $file->forceFill(['is_public' => true, 'share_token' => Str::random(64)])->save();
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'is_public' => true,
+                'url' => route('gass.files.shared.view', $file->share_token),
+            ]);
+        }
+
+        return back()->with('success', 'File ini sekarang dapat dibuka melalui tautan publik.');
+    }
+
     public function download(Request $request, GassRoomFile $file)
     {
         $this->ensureRoomAccess($request);
@@ -125,6 +154,37 @@ class GassRoomController extends Controller
 
         abort_unless(Storage::disk('local')->exists($file->path), 404);
 
+        return $this->preview($file, false);
+    }
+
+    public function sharedView(string $token): View
+    {
+        $file = $this->findSharedFile($token);
+        abort_unless(Storage::disk('local')->exists($file->path), 404);
+
+        return $this->preview($file, true);
+    }
+
+    public function sharedContent(string $token): BinaryFileResponse
+    {
+        $file = $this->findSharedFile($token);
+        abort_unless(Storage::disk('local')->exists($file->path), 404);
+
+        return $this->contentResponse($file);
+    }
+
+    public function sharedDownload(string $token)
+    {
+        $file = $this->findSharedFile($token);
+        abort_unless(Storage::disk('local')->exists($file->path), 404);
+
+        return Storage::disk('local')->download($file->path, $file->original_name, [
+            'Content-Type' => $file->mime_type ?: 'application/octet-stream',
+        ]);
+    }
+
+    private function preview(GassRoomFile $file, bool $shared): View
+    {
         $extension = strtolower(pathinfo($file->original_name, PATHINFO_EXTENSION));
         $previewType = match (true) {
             in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'bmp'], true) => 'image',
@@ -137,7 +197,14 @@ class GassRoomController extends Controller
             default => 'unavailable',
         };
 
-        return view('gass.preview', compact('file', 'previewType'));
+        $contentUrl = $shared
+            ? route('gass.files.shared.content', $file->share_token)
+            : route('gass.files.content', $file);
+        $downloadUrl = $shared
+            ? route('gass.files.shared.download', $file->share_token)
+            : route('gass.files.download', $file);
+
+        return view('gass.preview', compact('file', 'previewType', 'shared', 'contentUrl', 'downloadUrl'));
     }
 
     public function fileContent(Request $request, GassRoomFile $file): BinaryFileResponse
@@ -146,6 +213,11 @@ class GassRoomController extends Controller
 
         abort_unless(Storage::disk('local')->exists($file->path), 404);
 
+        return $this->contentResponse($file);
+    }
+
+    private function contentResponse(GassRoomFile $file): BinaryFileResponse
+    {
         $extension = strtolower(pathinfo($file->original_name, PATHINFO_EXTENSION));
         $contentTypes = [
             'aac' => 'audio/aac',
@@ -180,6 +252,14 @@ class GassRoomController extends Controller
             'X-Content-Type-Options' => 'nosniff',
             'Cache-Control' => 'private, no-store',
         ]);
+    }
+
+    private function findSharedFile(string $token): GassRoomFile
+    {
+        return GassRoomFile::query()
+            ->where('share_token', $token)
+            ->where('is_public', true)
+            ->firstOrFail();
     }
 
     public function destroy(Request $request, GassRoomFile $file): RedirectResponse

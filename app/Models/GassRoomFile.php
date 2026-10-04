@@ -11,5 +11,14 @@ class GassRoomFile extends Model
         'path',
         'size_bytes',
         'mime_type',
+        'is_public',
+        'share_token',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'is_public' => 'boolean',
+        ];
+    }
 }
